@@ -4,7 +4,8 @@
 \name{hmp1_2_metadata}
 \alias{hmp1_2_metadata}
 \title{Public metadata of HMP1-II study
-Provides sample information and body sites}
+Provides sample information and body sites
+Can be loaded to workspace via data(hmp1_2_metadata)}
 \format{matrix}
 \usage{
 hmp1_2_metadata
@@ -12,6 +13,7 @@ hmp1_2_metadata
 \description{
 Public metadata of HMP1-II study
 Provides sample information and body sites
+Can be loaded to workspace via data(hmp1_2_metadata)
 }
 \references{
 \url{http://github.com/philippmuench}
