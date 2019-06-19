@@ -7,6 +7,7 @@
 Miscellaneous helper functions mostly for comparative genomics, metagenomics and package development from P. Münch at LMU Munich & Helmholtz Centre for Infection Research.
 
 ```r
+install.packages("devtools")
 devtools::install_github("philippmuench/PMtools")
 ```
 
