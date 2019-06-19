@@ -32,4 +32,4 @@ after_success:
   || true; git push; fi;
   - Rscript -e 'library(covr); covr::codecov()'
 notifications:
-  email: philipp.muench@helmholtz-hzi.de
+  slack: bifo-hzi:LHS0Rorop7SBzoQuUVLmnX80
