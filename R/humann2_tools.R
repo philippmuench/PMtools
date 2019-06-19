@@ -16,7 +16,7 @@
 #' @param column.stratification.order oder of entries in metadata.factor
 #'   information
 #' @param order.by how to order bars within one statification
-#' @eport
+#' @export
 humann2Barplot <- function(humann2.table,
                            num.bugs = 3,
                            feature = "Cas1",
@@ -112,8 +112,7 @@ humann2Barplot <- function(humann2.table,
 #' @description Generates barplots statified by taxon and metadata
 #' @param dat table holding preprocessed humann2 information using `humann2Barplot`
 #' @param scale how to scale the height of bars, on default sqrt
-#' @eport
-#'
+#' @export
 makeHumann2Barplot <-
   function(dat,
            scale = "sqrt",
@@ -136,10 +135,11 @@ makeHumann2Barplot <-
         axis.text.x = ggplot2::element_blank(),
         axis.ticks.x = ggplot2::element_blank()
       )
-    #p <- p + theme(panel.grid.major = element_blank(),
-    #      panel.grid.minor = element_blank(),
-    #      strip.background = element_blank(),
-    #      panel.border = element_rect(colour = "black"))
+    # make facet_grid nicer
+    p <- p + ggplot2::theme(panel.grid.major = ggplot2::element_blank(),
+          panel.grid.minor = ggplot2::element_blank(),
+          strip.background = ggplot2::element_blank(),
+          panel.border = ggplot2::element_rect(colour = "black"))
     p <- p + ggplot2::scale_fill_brewer(palette = palette)
     if (hide.legend){
       p <- p + ggplot2::theme(legend.position = "none")
