@@ -14,8 +14,6 @@ addons:
     - libmagick++-dev
 
 before_install:
-- chmod +x travis_setup.sh
-- "./travis_setup.sh"
 - R -e "install.packages(c('devtools','pkgload', 'pkgdown', 'covr'))"
 before_script:
 - R --no-save <<< 'pkgload::load_all(); devtools::document()'
@@ -25,3 +23,4 @@ after_success:
 
 notifications:
   email: philipp.muench@helmholtz-hzi.de
+
