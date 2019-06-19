@@ -1,0 +1,8 @@
+url: https://philippmuench.github.io/PMtools/
+
+template:
+  params:
+    bootswatch: cosmo
+
+development:
+  mode: auto
