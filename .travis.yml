@@ -23,7 +23,7 @@ before_script:
 - R --no-save <<< 'pkgload::load_all(); devtools::document()'
 
 after_success:
-  - Rscript -e 'library(covr);coveralls()'
+  - Rscript -e 'library(covr); covr::codecov()'
 
 notifications:
   email: philipp.muench@helmholtz-hzi.de
