@@ -1,12 +1,27 @@
 language: r
+cache: packages
+dist: trusty
+warnings_are_errors: false
 
-r_github_packages:
-  - jimhester/covr
+addons:
+  apt:
+    packages:
+    - build-essential
+    - libxml2-dev
+    - autoconf
+    - libtool
+    - subversion
+    - libmagick++-dev
+
+before_install:
+- chmod +x travis_setup.sh
+- "./travis_setup.sh"
+- R -e "install.packages(c('devtools','pkgload', 'pkgdown', 'covr'))"
+before_script:
+- R --no-save <<< 'pkgload::load_all(); devtools::document()'
 
 after_success:
   - Rscript -e 'library(covr);coveralls()'
 
 notifications:
-  email:
-    on_success: change
-    on_failure: change
+  email: philipp.muench@helmholtz-hzi.de
