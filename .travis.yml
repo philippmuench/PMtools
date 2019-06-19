@@ -2,11 +2,10 @@ language: r
 cache: packages
 dist: trusty
 warnings_are_errors: false
-
 env:
   global:
-  CODECOV_TOKEN="d64abe59-e0dd-4453-9f36-89c591097d7b"
-
+  - CODECOV_TOKEN="d64abe59-e0dd-4453-9f36-89c591097d7b"
+  - secure: cCt9wBGF2WodOWndDqu8j9t6ZMf730p6gLGuPCoIDefSdxY+02IfbZoNJ+qvGZY0gmEjw6bkZmHl/Q1HPXjHe7dJ0iFvdZtXyGYRiYiKAMYXIR7taultzoXkrGXTQshW5oD6n9UZaJr18GvAmDglDTOdY2BAfCiRbNZv2JYi48MyzoI9SGe+6mUOXhYKu4W6TV2I7ptFRyes8Brd5nsJYmntS8uPo6AyRB2ACEYr9l7JGqZWrTUKv4A439OYGlJRe1RwjOlFSfUUx2DbdZLHc5bJgtSe0y+5EQ8UF0rY/rMFW+0+XMbmMQMJWuNHOaz2UolCVhwKu7yR8l7zWv7yFCvjboVZoEkFomQeMhTq/naNFrKeJ1sq3PAKMTbMiVbSgYb2RM3CU1Bi2HwXVOPSWGACooOJffbo8yjEALR8832jOglKAWlIl671R9jlYYWpAw3TVc34fogr3gA7JWEfjcJNUizifSp+AiY2Q5w4tVXYtbRRJ/+1i9ksFFkSXvvKzrsoPR81TKToqQ6k7cuRZ7BgHWXPAqp6IrdvUfoT0dxbCi4mDskoUHEHxUSH0IupnLU2Q7rKEfcW/SQh5xDMW8B6JQ0mKZGB3Oi0XW1FtvnVPl9YJa5PgJF+qfZEqGiQ8Bu97W05pAGBCg4Vwb1b6Hc4ag+y43h/OT9B2j3E8kA=
 addons:
   apt:
     packages:
@@ -16,15 +15,11 @@ addons:
     - libtool
     - subversion
     - libmagick++-dev
-
 before_install:
 - R -e "install.packages(c('devtools','pkgload', 'pkgdown', 'covr'))"
 before_script:
 - R --no-save <<< 'pkgload::load_all(); devtools::document()'
-
 after_success:
-  - Rscript -e 'library(covr); covr::codecov()'
-
+- Rscript -e 'library(covr); covr::codecov()'
 notifications:
   email: philipp.muench@helmholtz-hzi.de
-
