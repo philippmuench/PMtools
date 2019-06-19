@@ -1,0 +1,8 @@
+.Rproj.user
+*.Rproj
+.Rhistory
+html
+src/*.so
+src/*.o
+PMtools_*.tar.gz
+PMtools.Rcheck

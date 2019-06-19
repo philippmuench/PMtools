@@ -1,11 +1,21 @@
 Package: PMtools
 Type: Package
-Title: What the Package Does (Title Case)
+Title: Miscellaneous helper functions
 Version: 0.1.0
-Author: Who wrote it
+License: BSD_2_clause + file LICENSE
+Author: Philipp Muench
 Maintainer: The package maintainer <yourself@somewhere.net>
 Description: More about what it does (maybe more than one line)
     Use four spaces when indenting paragraphs within the Description.
-License: What license is it under?
 Encoding: UTF-8
 LazyData: true
+Imports:
+    checkmate (>= 1.8.0),
+    data.table,
+    methods,
+    utils,
+    stats
+Suggests:
+    testthat,
+    microbenchmark,
+    codetools

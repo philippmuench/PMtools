@@ -1,2 +1,12 @@
+^makeR
+src/*.o
+src/*.so
+^.*tar.gz$
+^.*\.swp$
+.gitignore
+.Rproj.user
+.travis.yml
+^Makefile
+README.md
 ^.*\.Rproj$
 ^\.Rproj\.user$
