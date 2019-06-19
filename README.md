@@ -2,7 +2,7 @@
 
 # PMtools
 
-Miscellaneous helper functions from P. Münch at LMU Munich.
+Miscellaneous helper functions mostly for comparative genomics, metagenomics and package development from P. Münch at LMU Munich & Helmholtz Centre for Infection Research.
 
 ```r
 devtools::install_github("philippmuench/PMtools")
