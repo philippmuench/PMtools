@@ -2,7 +2,7 @@ Package: PMtools
 Type: Package
 Title: Miscellaneous helper functions
 Version: 0.1.0
-License: BSD_2_clause + file LICENSE
+License: AGPL_3 + file LICENSE
 Author: Philipp Muench
 Maintainer: The package maintainer <yourself@somewhere.net>
 Description: More about what it does (maybe more than one line)
