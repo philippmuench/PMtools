@@ -108,8 +108,10 @@ humann2Barplot <- function(humann2.table,
                                          levels = humann.top.bugs.bc$samples)
     humann.top.bugs.m <- humann.top.bugs.m[which(humann.top.bugs.m$value != 0),]
     message("Finished sorting by BC.")
+    # sum up all known taxa per stratum
+    humann.top.bugs.m.agg <- stats::aggregate(value ~ SRS + taxa + variable + meta, data = humann.top.bugs.m, FUN = sum)
   }
-  return(humann.top.bugs.m)
+  return(humann.top.bugs.m.agg)
 }
 
 #' @title makeHumann2Barplot
