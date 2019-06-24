@@ -94,19 +94,27 @@ humann2Barplot <- function(humann2.table,
          meta.community.t <- meta.community.t[pos.count.ids,]
          message(paste("removed", length(zero.count.ids), "samples with empty rows"))
       }
-
+      if (nrow(meta.community.t) < 3) {
+        # pseudo sort since clustering would require more samples
+        datalist[[length(datalist) + 1]] <-
+          data.frame(
+            feature = feature,
+            meta = meta,
+            samples = rownames(meta.community.t)
+          )
+        next
+      }
       bc <-
         as.matrix(vegan::vegdist(meta.community.t, method = "bray"))
       bc[is.na(bc)] <- 0
       bc.clusters <- stats::hclust(stats::as.dist(bc), method = "single")
       bc.order.index <-
         stats::order.dendrogram(stats::as.dendrogram(bc.clusters))
-
       datalist[[length(datalist) + 1]] <-
         data.frame(
           feature = feature,
           meta = meta,
-          samples = rownames(meta.community)[bc.order.index]
+          samples = rownames(meta.community.t)[bc.order.index]
         )
     }
     humann.top.bugs.bc <- do.call(rbind, datalist)
