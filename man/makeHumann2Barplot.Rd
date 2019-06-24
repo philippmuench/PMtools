@@ -11,6 +11,10 @@ makeHumann2Barplot(dat, scale = "sqrt", palette = "Set1",
 \item{dat}{table holding preprocessed humann2 information using `humann2Barplot`}
 
 \item{scale}{how to scale the height of bars, on default sqrt}
+
+\item{palette}{ggplot2 color palette}
+
+\item{hide.legend}{boolean information if ledgend should be included}
 }
 \description{
 Generates barplots statified by taxon and metadata

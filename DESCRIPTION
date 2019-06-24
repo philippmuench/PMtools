@@ -24,7 +24,6 @@ Imports:
     usethis
 Suggests:
     testthat,
-    microbenchmark,
     codetools,
     covr
 RoxygenNote: 6.1.1

@@ -50,7 +50,7 @@ humann2Barplot <- function(humann2.table,
          index.return = TRUE,
          decreasing = TRUE)
   top.index <-
-    lapply(lst, "[", lst$x %in% head(unique(lst$x), num.bugs))
+    lapply(lst, "[", lst$x %in% utils::head(unique(lst$x), num.bugs))
 
   # set taxa description of all non-top taxa to "other"
   if (nrow(humann2.classified) > num.bugs) {
@@ -73,7 +73,6 @@ humann2Barplot <- function(humann2.table,
     for (meta in unique(humann.top.bugs.m$meta)) {
       if (is.na(meta))
         next
-
       meta.samples <-
         metadata[which(metadata[, metadata.factor] == meta), metadata.id]
       meta.community <-
@@ -84,10 +83,15 @@ humann2Barplot <- function(humann2.table,
         meta.community[, which(names(meta.community) %in% meta.samples)]
 
       meta.community <- as.matrix(t(meta.community))
+      zero.count.ids <- which(rowSums(meta.community) == 0)
+      if (length(zero.count.ids) > 0) {
+         meta.community <- meta.community[-zero.count.ids,]
+         message(paste("removed", length(zero.count.ids), "samples with empty rows"))
+      }
       bc <-
         as.matrix(vegan::vegdist(meta.community, method = "bray"))
       bc[is.na(bc)] <- 0
-      bc.clusters <- stats::hclust(as.dist(bc), method = "single")
+      bc.clusters <- stats::hclust(stats::as.dist(bc), method = "single")
       bc.order.index <-
         stats::order.dendrogram(stats::as.dendrogram(bc.clusters))
 
@@ -102,6 +106,7 @@ humann2Barplot <- function(humann2.table,
     # change the facort order
     humann.top.bugs.m$variable <- factor(humann.top.bugs.m$variable,
                                          levels = humann.top.bugs.bc$samples)
+    humann.top.bugs.m <- humann.top.bugs.m[which(humann.top.bugs.m$value != 0),]
     message("Finished sorting by BC.")
   }
   return(humann.top.bugs.m)
@@ -112,6 +117,8 @@ humann2Barplot <- function(humann2.table,
 #' @description Generates barplots statified by taxon and metadata
 #' @param dat table holding preprocessed humann2 information using `humann2Barplot`
 #' @param scale how to scale the height of bars, on default sqrt
+#' @param palette ggplot2 color palette
+#' @param hide.legend boolean information if ledgend should be included
 #' @export
 makeHumann2Barplot <-
   function(dat,
