@@ -26,8 +26,7 @@ p <- makeHumann2Barplot(dat, hide.legend = F)
 p
 ```
 
-![example figure][man/figures/humann2_tools_figure.png]
-
+![](man/figures/README-example-1.png)
 
 ## License and copyright
 Copyright 2019 Philipp Münch
