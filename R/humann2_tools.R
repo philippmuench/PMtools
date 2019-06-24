@@ -71,6 +71,7 @@ humann2Barplot <- function(humann2.table,
   if (order.by == "bc") {
     datalist <- list()
     for (meta in unique(humann.top.bugs.m$meta)) {
+      print(meta)
       if (is.na(meta))
         next
       meta.samples <-
@@ -81,15 +82,21 @@ humann2Barplot <- function(humann2.table,
       # limit to e.g. one body site
       meta.community <-
         meta.community[, which(names(meta.community) %in% meta.samples)]
-
-      meta.community <- as.matrix(t(meta.community))
-      zero.count.ids <- which(rowSums(meta.community) == 0)
+      meta.community <- as.data.frame(meta.community)
+      #meta.community <- as.matrix(t(meta.community))
+      meta.community.t <- data.table::transpose(meta.community)
+      colnames(meta.community.t) <- rownames(meta.community)
+      rownames(meta.community.t) <- colnames(meta.community)
+      zero.count.ids <- which(rowSums(meta.community.t) == 0)
+      pos.count.ids <- which(rowSums(meta.community.t) != 0)
+      if (length(zero.count.ids) >= nrow(meta.community.t)) next # all are zero
       if (length(zero.count.ids) > 0) {
-         meta.community <- meta.community[-zero.count.ids,]
+         meta.community.t <- meta.community.t[pos.count.ids,]
          message(paste("removed", length(zero.count.ids), "samples with empty rows"))
       }
+
       bc <-
-        as.matrix(vegan::vegdist(meta.community, method = "bray"))
+        as.matrix(vegan::vegdist(meta.community.t, method = "bray"))
       bc[is.na(bc)] <- 0
       bc.clusters <- stats::hclust(stats::as.dist(bc), method = "single")
       bc.order.index <-
@@ -106,11 +113,11 @@ humann2Barplot <- function(humann2.table,
     # change the facort order
     humann.top.bugs.m$variable <- factor(humann.top.bugs.m$variable,
                                          levels = humann.top.bugs.bc$samples)
-    humann.top.bugs.m <- humann.top.bugs.m[which(humann.top.bugs.m$value != 0),]
     message("Finished sorting by BC.")
-    # sum up all known taxa per stratum
-    humann.top.bugs.m.agg <- stats::aggregate(value ~ SRS + taxa + variable + meta, data = humann.top.bugs.m, FUN = sum)
   }
+  humann.top.bugs.m <- humann.top.bugs.m[which(humann.top.bugs.m$value != 0),]
+  # sum up all known taxa per stratum
+  humann.top.bugs.m.agg <- stats::aggregate(value ~ SRS + taxa + variable + meta, data = humann.top.bugs.m, FUN = sum)
   return(humann.top.bugs.m.agg)
 }
 
@@ -134,6 +141,8 @@ makeHumann2Barplot <-
     if (scale == "sqrt") {
       p <- p + ggplot2::scale_y_sqrt(expand = c(0, 0), limits = c(0, max(stats::aggregate(value ~ variable, data = dat, FUN = sum)$value)))
       p <- p + ggplot2::ylab("abundance (sqrt scaled)")
+    } else {
+      p <- p + ggplot2::ylab("abundance")
     }
 
     p <- p +  PMtools::themePM()
@@ -155,7 +164,7 @@ makeHumann2Barplot <-
       bugs.colors <- RColorBrewer::brewer.pal(length(unique(dat$taxa)) - 2, "Set1")
     }
     p <- p + ggplot2::scale_fill_manual(values =  c(bugs.colors, "grey80", "grey60"))
-    p <- p + ggplot2::guides(fill = ggplot2::guide_legend(title = "Taxonomy", ncol = 2))
+    p <- p + ggplot2::guides(fill = ggplot2::guide_legend(title = "", ncol = 2))
     return(p)
 
   }
