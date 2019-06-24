@@ -119,41 +119,43 @@ humann2Barplot <- function(humann2.table,
 #' @description Generates barplots statified by taxon and metadata
 #' @param dat table holding preprocessed humann2 information using `humann2Barplot`
 #' @param scale how to scale the height of bars, on default sqrt
-#' @param palette ggplot2 color palette
+#' @param bugs.colors html color codes of bar plots, must be same length as num.bugs
 #' @param hide.legend boolean information if ledgend should be included
 #' @export
 makeHumann2Barplot <-
   function(dat,
            scale = "sqrt",
-           palette = "Set1",
+           bugs.colors = c("#1b9e77","#d95f02", "#7570b3"),
            hide.legend = T) {
-    y_limit <-
-      max(stats::aggregate(value ~ variable, data = dat, FUN = sum)$value)
     p <-
       ggplot2::ggplot(dat = dat, ggplot2::aes(x = variable, y = value, fill = taxa))
     p <- p + ggplot2::geom_bar(stat = "identity")
     p <- p + ggplot2::ggtitle(dat[1, 1])
-    if (scale == "sqrt")
-      p <-
-      p + ggplot2::scale_y_sqrt(expand = c(0, 0), limits = c(0, y_limit))
+    if (scale == "sqrt") {
+      p <- p + ggplot2::scale_y_sqrt(expand = c(0, 0), limits = c(0, max(stats::aggregate(value ~ variable, data = dat, FUN = sum)$value)))
+      p <- p + ggplot2::ylab("abundance (sqrt scaled)")
+    }
+
+    p <- p +  PMtools::themePM()
+    p <- p + ggplot2::theme(
+      axis.title.x = ggplot2::element_blank(),
+      axis.text.x = ggplot2::element_blank(),
+      axis.ticks.x = ggplot2::element_blank(),
+      strip.background = ggplot2::element_blank())
     p <-
       p +  ggplot2::facet_grid(. ~ meta, space = "free_x", scales = "free_x")
-    p <-
-      p +  PMtools::themePM() + ggplot2::theme(
-        axis.title.x = ggplot2::element_blank(),
-        axis.text.x = ggplot2::element_blank(),
-        axis.ticks.x = ggplot2::element_blank()
-      )
-    # make facet_grid nicer
-    p <- p + ggplot2::theme(panel.grid.major = ggplot2::element_blank(),
-          panel.grid.minor = ggplot2::element_blank(),
-          strip.background = ggplot2::element_blank(),
-          panel.border = ggplot2::element_rect(colour = "black"))
-    p <- p + ggplot2::scale_fill_brewer(palette = palette)
-    if (hide.legend){
+    if (hide.legend) {
       p <- p + ggplot2::theme(legend.position = "none")
     } else {
       p <- p + ggplot2::theme(legend.position = "bottom")
     }
+    # coloring
+    if (length(bugs.colors) < length(unique(dat$taxa)) - 2) {
+      message("Not enough colors provided, using RColorBrewer")
+      bugs.colors <- RColorBrewer::brewer.pal(length(unique(dat$taxa)) - 2, "Set1")
+    }
+    p <- p + ggplot2::scale_fill_manual(values =  c(bugs.colors, "grey80", "grey60"))
+    p <- p + ggplot2::guides(fill = ggplot2::guide_legend(title = "Taxonomy", ncol = 2))
     return(p)
+
   }

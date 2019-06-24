@@ -21,12 +21,13 @@ devtools::install_github("philippmuench/PMtools")
 library(PMtools)
 data(humann2_table)
 data(hmp1_2_metadata)
-dat <- humann2Barplot(humann2_table, metadata = hmp1_2_metadata, feature = "Cas2")
-p <- makeHumann2Barplot(dat)
-pdf("plot.pdf", width = 5, height = 5)
-print(p)
-dev.off()
+dat <- humann2Barplot(humann2_table, metadata = hmp1_2_metadata, feature = "Cas1", num.bugs = 4)
+p <- makeHumann2Barplot(dat, hide.legend = F)
+p
 ```
+
+![example figure][man/figures/humann2_tools_figure.png]
+
 
 ## License and copyright
 Copyright 2019 Philipp Münch

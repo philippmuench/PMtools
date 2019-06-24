@@ -4,15 +4,15 @@
 \alias{makeHumann2Barplot}
 \title{makeHumann2Barplot}
 \usage{
-makeHumann2Barplot(dat, scale = "sqrt", palette = "Set1",
-  hide.legend = T)
+makeHumann2Barplot(dat, scale = "sqrt", bugs.colors = c("#1b9e77",
+  "#d95f02", "#7570b3"), hide.legend = T)
 }
 \arguments{
 \item{dat}{table holding preprocessed humann2 information using `humann2Barplot`}
 
 \item{scale}{how to scale the height of bars, on default sqrt}
 
-\item{palette}{ggplot2 color palette}
+\item{bugs.colors}{html color codes of bar plots, must be same length as num.bugs}
 
 \item{hide.legend}{boolean information if ledgend should be included}
 }

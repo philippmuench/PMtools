@@ -29,7 +29,7 @@ themePM <- function(base_size = 11, base_family = "")
                                                 l = 0.8 * half_line/2)),
 
     legend.background = ggplot2::element_rect(colour = NA),
-    legend.margin = ggplot2::unit(0.2, "cm"),
+    legend.spacing = ggplot2::unit(0.2, "cm"),
     legend.key = ggplot2::element_rect(fill = "white", colour = "white"),
     legend.key.size = ggplot2::unit(1, "lines"),
     legend.key.height = NULL,
@@ -47,7 +47,7 @@ themePM <- function(base_size = 11, base_family = "")
     panel.border = ggplot2::element_blank(),
     panel.grid.major = ggplot2::element_blank(),
     panel.grid.minor = ggplot2::element_blank(),
-    panel.margin = ggplot2::unit(half_line, "pt"), panel.margin.x = NULL,
+    panel.spacing = ggplot2::unit(half_line, "pt"), panel.margin.x = NULL,
     panel.margin.y = NULL, panel.ontop = FALSE,
 
     strip.background = ggplot2::element_rect(colour="#f0f0f0",fill="#f0f0f0"),
