@@ -21,6 +21,7 @@ Imports:
     ggplot2,
     scales,
     stringr,
+    RColorBrewer,
     vegan,
     usethis
 Suggests:

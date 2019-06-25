@@ -126,6 +126,7 @@ humann2Barplot <- function(humann2.table,
                                          levels = humann.top.bugs.bc$samples)
     message("Finished sorting by BC.")
   }
+
   humann.top.bugs.m <- humann.top.bugs.m[which(humann.top.bugs.m$value != 0),]
   # sum up all known taxa per stratum
   humann.top.bugs.m.agg <- stats::aggregate(value ~ SRS + taxa + variable + meta, data = humann.top.bugs.m, FUN = sum)
@@ -146,16 +147,24 @@ makeHumann2Barplot <-
            bugs.colors = c("#1b9e77","#d95f02", "#7570b3"),
            hide.legend = T) {
     unclassified.name <- "Unclassified"
-    name <- "Other"
+    other.name <- "Other"
+
+    # get taxon names for coloring
+    taxon.names <- unique(dat$taxa)
+    if (length(grep(other.name, taxon.names)) > 0)
+      taxon.names <- taxon.names[which(taxon.names != other.name)]
+    if (length(grep(unclassified.name, taxon.names)) > 0)
+      taxon.names <- taxon.names[which(taxon.names != unclassified.name)]
+
     if (scale == "log10+1") {
       dat$value <- log10(dat$value + 1)
     }
     if (scale == "pseudolog") {
       dat$value <- pseudoLog10(dat$value)
     }
-
+    order.levels <- c(taxon.names, other.name, unclassified.name)
     p <-
-      ggplot2::ggplot(dat = dat, ggplot2::aes(x = variable, y = value, fill = taxa))
+      ggplot2::ggplot(dat = dat, ggplot2::aes(x = variable, y = value, fill = factor(taxa, levels = order.levels)))
     p <- p + ggplot2::geom_bar(stat = "identity")
     p <- p + ggplot2::ggtitle(dat[1, 1])
     if (scale == "sqrt") {
@@ -173,7 +182,7 @@ makeHumann2Barplot <-
       p <- p + ggplot2::ylab("abundance")
     }
 
-    p <- p +  PMtools::themePM()
+    p <- p + themePM(base.size = 7, axis.family = "mono")
     p <- p + ggplot2::theme(
       axis.title.x = ggplot2::element_blank(),
       axis.text.x = ggplot2::element_blank(),
@@ -192,12 +201,6 @@ makeHumann2Barplot <-
       bugs.colors <- RColorBrewer::brewer.pal(length(unique(dat$taxa)) - 2, "Set1")
     }
 
-    # get taxon names for coloring
-    taxon.names <- unique(dat$taxa)
-    if (length(grep(other.name, taxon.names)) > 0)
-      taxon.names <- taxon.names[which(taxon.names != other.name)]
-    if (length(grep(unclassified.name, taxon.names)) > 0)
-      taxon.names <- taxon.names[which(taxon.names != unclassified.name)]
 
     cols <- c(bugs.colors, "grey80", "grey60")
     names(cols) <- c(taxon.names, other.name, unclassified.name)
