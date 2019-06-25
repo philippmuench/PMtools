@@ -20,6 +20,7 @@ Imports:
     reshape2,
     ggplot2,
     scales,
+    stringr,
     vegan,
     usethis
 Suggests:
