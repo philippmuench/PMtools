@@ -55,10 +55,11 @@ humann2Barplot <- function(humann2.table,
   # set taxa description of all non-top taxa to "known"
   if (nrow(humann2.classified) > num.bugs) {
     humann2.classified[-top.index$ix,][, taxa.column] <- "Other"
-    # shorten taxa name
-    taxa.names <- humann2.classified[top.index$ix,][, taxa.column]
-    humann2.classified[top.index$ix,][, taxa.column] <- PMtools::shortenTaxons(taxa.names)
   }
+
+  # shorten taxa name
+  taxa.names <- humann2.classified[top.index$ix,][, taxa.column]
+  humann2.classified[top.index$ix,][, taxa.column] <- PMtools::shortenTaxons(taxa.names)
 
   humann.top.bugs <- rbind(humann2.unclassified, humann2.classified)
   humann.top.bugs$abundance <- NULL
@@ -130,6 +131,11 @@ humann2Barplot <- function(humann2.table,
   humann.top.bugs.m <- humann.top.bugs.m[which(humann.top.bugs.m$value != 0),]
   # sum up all known taxa per stratum
   humann.top.bugs.m.agg <- stats::aggregate(value ~ SRS + taxa + variable + meta, data = humann.top.bugs.m, FUN = sum)
+  # if we have no other category, add dummy
+  if (length(which(humann.top.bugs.m.agg$taxa == "Other")) == 0) {
+    dummy <- data.frame(SRS = feature, taxa = "Other", variable = humann.top.bugs.m.agg$variable[1], meta = meta, value = 0)
+    humann.top.bugs.m.agg <- rbind(humann.top.bugs.m.agg, dummy)
+  }
   return(humann.top.bugs.m.agg)
 }
 
@@ -182,7 +188,7 @@ makeHumann2Barplot <-
       p <- p + ggplot2::ylab("abundance")
     }
 
-    p <- p + themePM(base.size = 7, axis.family = "mono")
+    p <- p + PMtools::themePM(base.size = 7, axis.family = "mono")
     p <- p + ggplot2::theme(
       axis.title.x = ggplot2::element_blank(),
       axis.text.x = ggplot2::element_blank(),
