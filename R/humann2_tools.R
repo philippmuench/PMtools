@@ -142,14 +142,28 @@ makeHumann2Barplot <-
            scale = "sqrt",
            bugs.colors = c("#1b9e77","#d95f02", "#7570b3"),
            hide.legend = T) {
+    if (scale == "log10+1") {
+      dat$value <- log10(dat$value + 1)
+    }
+    if (scale == "pseudolog") {
+      dat$value <- pseudoLog10(dat$value)
+    }
     p <-
       ggplot2::ggplot(dat = dat, ggplot2::aes(x = variable, y = value, fill = taxa))
     p <- p + ggplot2::geom_bar(stat = "identity")
     p <- p + ggplot2::ggtitle(dat[1, 1])
     if (scale == "sqrt") {
-      p <- p + ggplot2::scale_y_sqrt(expand = c(0, 0), limits = c(0, max(stats::aggregate(value ~ variable, data = dat, FUN = sum)$value)))
-      p <- p + ggplot2::ylab("abundance (sqrt scaled)")
+      p <- p + ggplot2::scale_y_sqrt(expand = c(0, 0))
+      p <- p + ggplot2::ylab("abundance (sqrt)")
+    } else if (scale == "pseudolog") {
+      p <- p + ggplot2::scale_y_continuous(expand = c(0, 0))
+   #   p <- p +  ggplot2::scale_y_continuous(trans = scales::pseudo_log_trans(sigma = 1), expand = c(0, 0))
+      p <- p + ggplot2::ylab("abundance (pseudolog)")
+    } else if (scale == "log10+1"){
+      p <- p + ggplot2::scale_y_continuous(expand = c(0, 0))
+      p <- p + ggplot2::ylab("abundance (log10+1)")
     } else {
+      p <- p + ggplot2::scale_y_continuous(expand = c(0, 0))
       p <- p + ggplot2::ylab("abundance")
     }
 
