@@ -145,12 +145,15 @@ makeHumann2Barplot <-
            scale = "sqrt",
            bugs.colors = c("#1b9e77","#d95f02", "#7570b3"),
            hide.legend = T) {
+    unclassified.name <- "Unclassified"
+    name <- "Other"
     if (scale == "log10+1") {
       dat$value <- log10(dat$value + 1)
     }
     if (scale == "pseudolog") {
       dat$value <- pseudoLog10(dat$value)
     }
+
     p <-
       ggplot2::ggplot(dat = dat, ggplot2::aes(x = variable, y = value, fill = taxa))
     p <- p + ggplot2::geom_bar(stat = "identity")
@@ -188,7 +191,18 @@ makeHumann2Barplot <-
       message("Not enough colors provided, using RColorBrewer")
       bugs.colors <- RColorBrewer::brewer.pal(length(unique(dat$taxa)) - 2, "Set1")
     }
-    p <- p + ggplot2::scale_fill_manual(values =  c(bugs.colors, "grey80", "grey60"))
+
+    # get taxon names for coloring
+    taxon.names <- unique(dat$taxa)
+    if (length(grep(other.name, taxon.names)) > 0)
+      taxon.names <- taxon.names[which(taxon.names != other.name)]
+    if (length(grep(unclassified.name, taxon.names)) > 0)
+      taxon.names <- taxon.names[which(taxon.names != unclassified.name)]
+
+    cols <- c(bugs.colors, "grey80", "grey60")
+    names(cols) <- c(taxon.names, other.name, unclassified.name)
+
+    p <- p + ggplot2::scale_fill_manual(values =  cols)
     p <- p + ggplot2::guides(fill = ggplot2::guide_legend(title = "", ncol = 2))
     return(p)
 

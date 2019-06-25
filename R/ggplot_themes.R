@@ -83,5 +83,5 @@ pseudolog_trans <- function(base = exp(1), from=0)
   scales::trans_new("mylog", trans, inv, scales::log_breaks(base = base), domain = c(base^from, Inf))
 }
 
-#'  Signed Pseudo Logarithm
+#' Signed Pseudo Logarithm
 pseudoLog10 <- function(x) { asinh(x/2)/log(10) }
