@@ -2,4 +2,5 @@
 
 export(humann2Barplot)
 export(makeHumann2Barplot)
+export(shortenTaxons)
 export(themePM)
