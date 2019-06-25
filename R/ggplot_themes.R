@@ -66,3 +66,22 @@ themePM <- function(base_size = 11, base_family = "")
     plot.margin = ggplot2::margin(half_line, half_line, half_line, half_line),
     complete = TRUE)
 }
+
+#' Custom ggplto2 break function (exponent)
+#' @export
+base_breaks <- function(n = 10){
+  function(x) {
+    axisTicks(log10(range(x, na.rm = TRUE)), log = TRUE, n = n)
+  }
+}
+
+#' Custom pseudolog transformation
+pseudolog_trans <- function(base = exp(1), from=0)
+{
+  trans <- function(x) log(x, base) - from
+  inv <- function(x) base^(x + from)
+  scales::trans_new("mylog", trans, inv, scales::log_breaks(base = base), domain = c(base^from, Inf))
+}
+
+#'  Signed Pseudo Logarithm
+pseudoLog10 <- function(x) { asinh(x/2)/log(10) }
