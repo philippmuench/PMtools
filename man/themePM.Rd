@@ -4,7 +4,7 @@
 \alias{themePM}
 \title{Custom ggplto2 theme}
 \usage{
-themePM(base_size = 11, base_family = "")
+themePM(base.size = 11, axis.family = "", base.family = "")
 }
 \description{
 Custom ggplto2 theme
