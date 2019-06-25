@@ -17,13 +17,19 @@ devtools::install_github("philippmuench/PMtools")
 
 ### generation of barplots
 
+command used to generate Cas figures:
+
 ``` r
 library(PMtools)
 data(humann2_table)
 data(hmp1_2_metadata)
-dat <- humann2Barplot(humann2_table, metadata = hmp1_2_metadata, feature = "Cas1", num.bugs = 4)
-p <- makeHumann2Barplot(dat, hide.legend = F)
-p
+for (feature in paste0("Cas", 1:10)){
+  dat <- humann2Barplot(humann2_table, metadata = hmp1_2_metadata, feature = feature, num.bugs = 3, order.by = "bc")
+  p <- makeHumann2Barplot(dat, hide.legend = F, scale = "sqrt")
+  pdf(file =  paste0(feature, ".pdf"), width = 3.5, height = 2)
+  print(p)
+  dev.off()
+}
 ```
 
 ![](man/figures/README-example-1.png)
