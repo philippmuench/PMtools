@@ -4,6 +4,9 @@
     <loc>https://philippmuench.github.io/PMtools//index.html</loc>
   </url>
   <url>
+    <loc>https://philippmuench.github.io/PMtools//reference/base_breaks.html</loc>
+  </url>
+  <url>
     <loc>https://philippmuench.github.io/PMtools//reference/hmp1_2_metadata.html</loc>
   </url>
   <url>
@@ -14,6 +17,12 @@
   </url>
   <url>
     <loc>https://philippmuench.github.io/PMtools//reference/makeHumann2Barplot.html</loc>
+  </url>
+  <url>
+    <loc>https://philippmuench.github.io/PMtools//reference/pseudoLog10.html</loc>
+  </url>
+  <url>
+    <loc>https://philippmuench.github.io/PMtools//reference/pseudolog_trans.html</loc>
   </url>
   <url>
     <loc>https://philippmuench.github.io/PMtools//reference/shortenTaxons.html</loc>
