@@ -40,7 +40,7 @@ humann2Barplot <- function(humann2.table,
   humann2.unclassified <-
     humann2.table[which(humann2.table[, taxa.column] == "unclassified"),]
   # replace name of "unclassified" to "other"
-  humann2.unclassified$taxa <- "other"
+  humann2.unclassified$taxa <- "Unclassified"
   humann2.classified <-
     humann2.table[which(humann2.table[, taxa.column] != "unclassified"),]
 
@@ -52,9 +52,12 @@ humann2Barplot <- function(humann2.table,
   top.index <-
     lapply(lst, "[", lst$x %in% utils::head(unique(lst$x), num.bugs))
 
-  # set taxa description of all non-top taxa to "other"
+  # set taxa description of all non-top taxa to "known"
   if (nrow(humann2.classified) > num.bugs) {
-    humann2.classified[-top.index$ix,][, taxa.column] <- "known"
+    humann2.classified[-top.index$ix,][, taxa.column] <- "Other"
+    # shorten taxa name
+    taxa.names <- humann2.classified[top.index$ix,][, taxa.column]
+    humann2.classified[top.index$ix,][, taxa.column] <- PMtools::shortenTaxons(taxa.names)
   }
 
   humann.top.bugs <- rbind(humann2.unclassified, humann2.classified)
