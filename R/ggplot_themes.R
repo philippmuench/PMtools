@@ -29,9 +29,9 @@ themePM <- function(base.size = 11, axis.family = "", base.family = "")
                                 margin = ggplot2::margin(r = 0.8 * half_line,
                                                 l = 0.8 * half_line/2)),
 
-    legend.background = ggplot2::element_rect(colour = NA),
+    legend.background = ggplot2::element_rect(colour = NA, fill = "transparent"),
     legend.spacing = ggplot2::unit(0.2, "cm"),
-    legend.key = ggplot2::element_rect(fill = "white", colour = "white"),
+    legend.key = ggplot2::element_rect(fill = "transparent", colour = NA),
     legend.key.size = ggplot2::unit(1, "lines"),
     legend.key.height = NULL,
     legend.key.width = NULL,
@@ -77,6 +77,7 @@ base_breaks <- function(n = 10){
 }
 
 #' Custom pseudolog transformation
+#' @export
 pseudolog_trans <- function(base = exp(1), from=0)
 {
   trans <- function(x) log(x, base) - from
@@ -85,4 +86,5 @@ pseudolog_trans <- function(base = exp(1), from=0)
 }
 
 #' Signed Pseudo Logarithm
+#' @export
 pseudoLog10 <- function(x) { asinh(x/2)/log(10) }
