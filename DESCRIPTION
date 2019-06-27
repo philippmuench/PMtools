@@ -23,7 +23,9 @@ Imports:
     stringr,
     RColorBrewer,
     vegan,
-    usethis
+    usethis,
+    randomcoloR,
+    grid
 Suggests:
     testthat,
     codetools,
