@@ -13,9 +13,10 @@
 #' @param metadata.id column in metadata file that holds the smaple id (colum names in humann2 table)
 #' @param metadata.factor column in metadata file that holds the annotation of interest
 #' @param use.custom.column.stratification custom orderin of row statification
+#' @param order.by how to order bars within one statification
 #' @param column.stratification.order oder of entries in metadata.factor
 #'   information
-#' @param order.by how to order bars within one statification
+#' @param custom.order custom sample order
 #' @export
 humann2Barplot <- function(humann2.table,
                            num.bugs = 3,
@@ -27,9 +28,11 @@ humann2Barplot <- function(humann2.table,
                            metadata.factor = 4,
                            use.custom.column.stratification = T,
                            order.by = "bc",
-                           column.stratification.order =  c("Oral",  "Skin", "Vaginal", "Gut")) {
+                           column.stratification.order =  c("Oral",  "Skin", "Vaginal", "Gut"),
+                           custom.order) {
   stopifnot(num.bugs > 0)
   stopifnot(any(humann2.table[, 1] == feature)) # feature is not in table
+
   # reduce table to relevant featue
   humann2.table <-
     humann2.table[which(humann2.table[, featue.column] == feature),]
@@ -72,6 +75,13 @@ humann2Barplot <- function(humann2.table,
     humann.top.bugs.m$meta <-
     factor(humann.top.bugs.m$meta, levels = column.stratification.order)
 
+  if (order.by == "custom"){
+    # change the facort order
+    humann.top.bugs.m$variable <- factor(humann.top.bugs.m$variable,
+                                         levels = custom.order)
+    message("Finished sorting by custom order.")
+
+  }
   if (order.by == "bc") {
     datalist <- list()
     for (meta in unique(humann.top.bugs.m$meta)) {
@@ -123,7 +133,7 @@ humann2Barplot <- function(humann2.table,
                                          levels = humann.top.bugs.bc$samples)
     message("Finished sorting by BC.")
   }
-
+  #ordering <-  humann.top.bugs.bc$samples
   #humann.top.bugs.m <- humann.top.bugs.m[which(humann.top.bugs.m$value != 0),]
 
   # sum up all known taxa per stratum
@@ -166,7 +176,7 @@ makeHumann2Barplot <-
       dat$value <- log10(dat$value + 1)
     }
     if (scale == "pseudolog") {
-      dat$value <- pseudoLog10(dat$value)
+      dat$value <- PMtools::pseudoLog10(dat$value)
     }
     order.levels <- c(taxon.names, other.name, unclassified.name)
     p <-
@@ -212,13 +222,37 @@ makeHumann2Barplot <-
       message("Not enough colors provided, using RColorBrewer")
       bugs.colors <- RColorBrewer::brewer.pal(length(unique(dat$taxa)) - 2, "Set1")
     }
-
-
     cols <- c(bugs.colors, "grey80", "grey60")
     names(cols) <- c(taxon.names, other.name, unclassified.name)
-
     p <- p + ggplot2::scale_fill_manual(values =  cols)
     p <- p + ggplot2::guides(fill = ggplot2::guide_legend(title = "", ncol = 2))
     return(p)
+}
 
-  }
+
+#' @title orderHumannByBc
+#'
+#' @description outputs order of samples by bray curtis
+#' @export
+getBcOrder <- function(metaphlan){
+    # generate community matrix
+
+    meta.community <- as.data.frame(metaphlan)
+    rownames(meta.community) <- meta.community$taxa
+    meta.community$taxa <- NULL
+
+    meta.community.t <- data.table::transpose(meta.community)
+    colnames(meta.community.t) <- meta.community$taxa
+    rownames(meta.community.t) <- colnames(meta.community)
+
+    bc <-
+      as.matrix(vegan::vegdist(meta.community.t, method = "bray"))
+
+    bc[is.na(bc)] <- 0
+    bc.clusters <- stats::hclust(stats::as.dist(bc), method = "single")
+    bc.order.index <-
+      stats::order.dendrogram(stats::as.dendrogram(bc.clusters))
+
+    ordering <- rownames(meta.community.t)[bc.order.index]
+  return(ordering)
+}
