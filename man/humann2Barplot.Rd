@@ -8,7 +8,7 @@ humann2Barplot(humann2.table, num.bugs = 3, feature = "Cas1",
   featue.column = 1, taxa.column = 2, metadata, metadata.id = 9,
   metadata.factor = 4, use.custom.column.stratification = T,
   order.by = "bc", column.stratification.order = c("Oral", "Skin",
-  "Vaginal", "Gut"))
+  "Vaginal", "Gut"), custom.order)
 }
 \arguments{
 \item{humann2.table}{a dataframe containing the HUMAnN2 output in tsv format}
@@ -33,6 +33,8 @@ humann2Barplot(humann2.table, num.bugs = 3, feature = "Cas1",
 
 \item{column.stratification.order}{oder of entries in metadata.factor
 information}
+
+\item{custom.order}{custom sample order}
 }
 \description{
 Generates barplots statified by taxon and metadata for one
