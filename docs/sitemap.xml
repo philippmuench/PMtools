@@ -7,10 +7,10 @@
     <loc>https://philippmuench.github.io/PMtools//reference/base_breaks.html</loc>
   </url>
   <url>
-    <loc>https://philippmuench.github.io/PMtools//reference/getBcOrder.html</loc>
+    <loc>https://philippmuench.github.io/PMtools//reference/hmp1_2_metadata.html</loc>
   </url>
   <url>
-    <loc>https://philippmuench.github.io/PMtools//reference/hmp1_2_metadata.html</loc>
+    <loc>https://philippmuench.github.io/PMtools//reference/hmp1_2_metaphlan.html</loc>
   </url>
   <url>
     <loc>https://philippmuench.github.io/PMtools//reference/humann2Barplot.html</loc>
@@ -20,6 +20,9 @@
   </url>
   <url>
     <loc>https://philippmuench.github.io/PMtools//reference/makeHumann2Barplot.html</loc>
+  </url>
+  <url>
+    <loc>https://philippmuench.github.io/PMtools//reference/orderHumannBySimilarity.html</loc>
   </url>
   <url>
     <loc>https://philippmuench.github.io/PMtools//reference/pseudoLog10.html</loc>
