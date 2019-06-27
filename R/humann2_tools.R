@@ -94,10 +94,6 @@ humann2Barplot <- function(humann2.table,
       zero.count.ids <- which(rowSums(meta.community.t) == 0)
       pos.count.ids <- which(rowSums(meta.community.t) != 0)
       if (length(zero.count.ids) >= nrow(meta.community.t)) next # all are zero
-      if (length(zero.count.ids) > 0) {
-         meta.community.t <- meta.community.t[pos.count.ids,]
-         message(paste("removed", length(zero.count.ids), "samples with empty rows"))
-      }
       if (nrow(meta.community.t) < 3) {
         # pseudo sort since clustering would require more samples
         datalist[[length(datalist) + 1]] <-
@@ -128,12 +124,14 @@ humann2Barplot <- function(humann2.table,
     message("Finished sorting by BC.")
   }
 
-  humann.top.bugs.m <- humann.top.bugs.m[which(humann.top.bugs.m$value != 0),]
+  #humann.top.bugs.m <- humann.top.bugs.m[which(humann.top.bugs.m$value != 0),]
+
   # sum up all known taxa per stratum
   humann.top.bugs.m.agg <- stats::aggregate(value ~ SRS + taxa + variable + meta, data = humann.top.bugs.m, FUN = sum)
+
   # if we have no other category, add dummy
   if (length(which(humann.top.bugs.m.agg$taxa == "Other")) == 0) {
-    dummy <- data.frame(SRS = feature, taxa = "Other", variable = humann.top.bugs.m.agg$variable[1], meta = meta, value = 0)
+    dummy <- data.frame(SRS = feature, taxa = "Other", variable = humann.top.bugs.m.agg$variable[1], meta = unique(humann.top.bugs.m$meta)[1], value = 0)
     humann.top.bugs.m.agg <- rbind(humann.top.bugs.m.agg, dummy)
   }
   return(humann.top.bugs.m.agg)
@@ -146,12 +144,14 @@ humann2Barplot <- function(humann2.table,
 #' @param scale how to scale the height of bars, on default sqrt
 #' @param bugs.colors html color codes of bar plots, must be same length as num.bugs
 #' @param hide.legend boolean information if ledgend should be included
+#' @param space free or fixed (x scale)
 #' @export
 makeHumann2Barplot <-
   function(dat,
            scale = "sqrt",
            bugs.colors = c("#1b9e77","#d95f02", "#7570b3"),
-           hide.legend = T) {
+           hide.legend = T,
+           space = "free") {
     unclassified.name <- "Unclassified"
     other.name <- "Other"
 
@@ -194,8 +194,14 @@ makeHumann2Barplot <-
       axis.text.x = ggplot2::element_blank(),
       axis.ticks.x = ggplot2::element_blank(),
       strip.background = ggplot2::element_blank())
-    p <-
-      p +  ggplot2::facet_grid(. ~ meta, space = "free_x", scales = "free_x")
+    if (space == "free") {
+      p <-
+        p +  ggplot2::facet_grid(. ~ meta, space = "free_x", scales = "free_x")
+    } else {
+      p <-
+        p +  ggplot2::facet_grid(. ~ meta, space = "free_x", scales = "free_x", shrink = T)
+    }
+
     if (hide.legend) {
       p <- p + ggplot2::theme(legend.position = "none")
     } else {
