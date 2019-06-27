@@ -18,6 +18,7 @@ addons:
     - libtool
     - subversion
     - libmagick++-dev
+    - libv8-dev 
 before_install:
   - R -e "install.packages(c('devtools', 'pkgload', 'pkgdown', 'covr'))"
 before_script:
