@@ -17,19 +17,72 @@ devtools::install_github("philippmuench/PMtools")
 
 ### generation of barplots
 
-command used to generate Cas figures:
-
 ``` r
-library(PMtools)
+# load example datasets
 data(humann2_table)
 data(hmp1_2_metadata)
-for (feature in paste0("Cas", 1:10)){
-  dat <- humann2Barplot(humann2_table, metadata = hmp1_2_metadata, feature = feature, num.bugs = 3, order.by = "bc")
-  p <- makeHumann2Barplot(dat, hide.legend = F, scale = "sqrt")
-  pdf(file =  paste0(feature, ".pdf"), width = 3.5, height = 2)
-  print(p)
-  dev.off()
+data(hmp1_2_metaphlan)
+```
+
+command to generate a figure of a single feature
+
+``` r
+# generate the sample order
+custom.order <-
+  orderHumannBySimilarity(hmp1_2_metaphlan, distance.method = "bray")
+# generate the data used for plotting
+dat <-
+  humann2Barplot(
+    humann2_table,
+    metadata = hmp1_2_metadata,
+    feature = "Cas2",
+    num.bugs = 4,
+    order.by = "custom",
+    custom.order = custom.order
+  )
+# generate the plot
+p <-
+  makeHumann2Barplot(
+    dat,
+    hide.legend = F,
+    scale = "pseudolog",
+    space = "fixed",
+    bugs.colors = randomColor(count = 4)
+  )
+# show figure
+print(p)
+```
+
+and to plot multiple features in one figure
+
+``` r
+cas_plots <- vector('list', 10)
+for (feature in paste0("Cas", 1:10)) {
+  cas_plots[[feature]]  <- local({
+    dat <-
+      humann2Barplot(
+        humann2_table,
+        metadata = hmp1_2_metadata,
+        feature = feature,
+        num.bugs = 3,
+        order.by = "custom",
+        custom.order = custom.order
+      )
+    p <-
+      makeHumann2Barplot(
+        dat,
+        hide.legend = F,
+        scale = "pseudolog",
+        space = "fixed",
+        bugs.colors = randomColor(count = 3)
+      )
+    print(p)
+  })
 }
+
+pdf("test_big.pdf", width = 6, height = 10)
+print(multiplot(plotlist = cas_plots, cols = 2))
+dev.off()
 ```
 
 ![](man/figures/README-example-1.png)
