@@ -5,7 +5,7 @@
 \title{makeHumann2Barplot}
 \usage{
 makeHumann2Barplot(dat, scale = "sqrt", bugs.colors = c("#1b9e77",
-  "#d95f02", "#7570b3"), hide.legend = T)
+  "#d95f02", "#7570b3"), hide.legend = T, space = "free")
 }
 \arguments{
 \item{dat}{table holding preprocessed humann2 information using `humann2Barplot`}
@@ -15,6 +15,8 @@ makeHumann2Barplot(dat, scale = "sqrt", bugs.colors = c("#1b9e77",
 \item{bugs.colors}{html color codes of bar plots, must be same length as num.bugs}
 
 \item{hide.legend}{boolean information if ledgend should be included}
+
+\item{space}{free or fixed (x scale)}
 }
 \description{
 Generates barplots statified by taxon and metadata
