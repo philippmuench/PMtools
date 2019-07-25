@@ -105,8 +105,8 @@
     
     </div>
 
-    <pre class="usage"><span class='fu'>makeHumann2Barplot</span>(<span class='no'>dat</span>, <span class='kw'>scale</span> <span class='kw'>=</span> <span class='st'>"sqrt"</span>, <span class='kw'>bugs.colors</span> <span class='kw'>=</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/c'>c</a></span>(<span class='st'>"#1b9e77"</span>,
-  <span class='st'>"#d95f02"</span>, <span class='st'>"#7570b3"</span>), <span class='kw'>hide.legend</span> <span class='kw'>=</span> <span class='no'>T</span>, <span class='kw'>space</span> <span class='kw'>=</span> <span class='st'>"free"</span>)</pre>
+    <pre class="usage"><span class='fu'>makeHumann2Barplot</span>(<span class='no'>dat</span>, <span class='kw'>scale</span> <span class='kw'>=</span> <span class='st'>"sqrt"</span>, <span class='no'>bugs.colors</span>,
+  <span class='kw'>use.random.colors</span> <span class='kw'>=</span> <span class='no'>T</span>, <span class='kw'>hide.legend</span> <span class='kw'>=</span> <span class='no'>T</span>, <span class='kw'>space</span> <span class='kw'>=</span> <span class='st'>"free"</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -121,7 +121,12 @@
     </tr>
     <tr>
       <th>bugs.colors</th>
-      <td><p>html color codes of bar plots, must be same length as num.bugs</p></td>
+      <td><p>html color codes of bar plots, must be same length as num.bugs,
+if not set it will be picked automatically</p></td>
+    </tr>
+    <tr>
+      <th>use.random.colors</th>
+      <td><p>use randomcoloR instead of RColorBrewer</p></td>
     </tr>
     <tr>
       <th>hide.legend</th>

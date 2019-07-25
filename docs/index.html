@@ -78,9 +78,9 @@
 <a href="#generation-of-barplots" class="anchor"></a>generation of barplots</h3>
 <div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb2-1" data-line-number="1"><span class="co"># load example datasets</span></a>
 <a class="sourceLine" id="cb2-2" data-line-number="2"><span class="kw"><a href="https://www.rdocumentation.org/packages/utils/topics/data">data</a></span>(humann2_table)</a>
-<a class="sourceLine" id="cb2-3" data-line-number="3"><span class="kw"><a href="https://www.rdocumentation.org/packages/utils/topics/data">data</a></span>(hmp1_<span class="dv">2</span>_metadata)</a>
-<a class="sourceLine" id="cb2-4" data-line-number="4"><span class="kw"><a href="https://www.rdocumentation.org/packages/utils/topics/data">data</a></span>(hmp1_<span class="dv">2</span>_metaphlan)</a></code></pre></div>
-<p>command to generate a figure of a single feature</p>
+<a class="sourceLine" id="cb2-3" data-line-number="3"><span class="kw"><a href="https://www.rdocumentation.org/packages/utils/topics/data">data</a></span>(hmp1_<span class="dv">2</span>_metadata)</a></code></pre></div>
+<p><img src="reference/figures/README-example-1.png"></p>
+<p>Command to generate a figure of a single feature. Set <code>num.bugs = "auto"</code> to automatically adjust the number of bugs needed to show 25% of RA</p>
 <div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb3-1" data-line-number="1"><span class="co"># generate the sample order</span></a>
 <a class="sourceLine" id="cb3-2" data-line-number="2">custom.order &lt;-</a>
 <a class="sourceLine" id="cb3-3" data-line-number="3"><span class="st">  </span><span class="kw"><a href="reference/orderHumannBySimilarity.html">orderHumannBySimilarity</a></span>(hmp1_<span class="dv">2</span>_metaphlan, <span class="dt">distance.method =</span> <span class="st">"bray"</span>)</a>
@@ -89,19 +89,19 @@
 <a class="sourceLine" id="cb3-6" data-line-number="6"><span class="st">  </span><span class="kw"><a href="reference/humann2Barplot.html">humann2Barplot</a></span>(</a>
 <a class="sourceLine" id="cb3-7" data-line-number="7">    humann2_table,</a>
 <a class="sourceLine" id="cb3-8" data-line-number="8">    <span class="dt">metadata =</span> hmp1_<span class="dv">2</span>_metadata,</a>
-<a class="sourceLine" id="cb3-9" data-line-number="9">    <span class="dt">feature =</span> <span class="st">"Cas2"</span>,</a>
-<a class="sourceLine" id="cb3-10" data-line-number="10">    <span class="dt">num.bugs =</span> <span class="dv">4</span>,</a>
+<a class="sourceLine" id="cb3-9" data-line-number="9">    <span class="dt">feature =</span> <span class="st">"Cas8"</span>,</a>
+<a class="sourceLine" id="cb3-10" data-line-number="10">    <span class="dt">num.bugs =</span> <span class="st">"auto"</span>,</a>
 <a class="sourceLine" id="cb3-11" data-line-number="11">    <span class="dt">order.by =</span> <span class="st">"custom"</span>,</a>
 <a class="sourceLine" id="cb3-12" data-line-number="12">    <span class="dt">custom.order =</span> custom.order</a>
 <a class="sourceLine" id="cb3-13" data-line-number="13">  )</a>
-<a class="sourceLine" id="cb3-14" data-line-number="14"><span class="co"># generate the plot</span></a>
-<a class="sourceLine" id="cb3-15" data-line-number="15">p &lt;-</a>
-<a class="sourceLine" id="cb3-16" data-line-number="16"><span class="st">  </span><span class="kw"><a href="reference/makeHumann2Barplot.html">makeHumann2Barplot</a></span>(</a>
-<a class="sourceLine" id="cb3-17" data-line-number="17">    dat,</a>
-<a class="sourceLine" id="cb3-18" data-line-number="18">    <span class="dt">hide.legend =</span> F,</a>
-<a class="sourceLine" id="cb3-19" data-line-number="19">    <span class="dt">scale =</span> <span class="st">"pseudolog"</span>,</a>
-<a class="sourceLine" id="cb3-20" data-line-number="20">    <span class="dt">space =</span> <span class="st">"fixed"</span>,</a>
-<a class="sourceLine" id="cb3-21" data-line-number="21">    <span class="dt">bugs.colors =</span> <span class="kw">randomColor</span>(<span class="dt">count =</span> <span class="dv">4</span>)</a>
+<a class="sourceLine" id="cb3-14" data-line-number="14">  </a>
+<a class="sourceLine" id="cb3-15" data-line-number="15"><span class="co"># generate the plot</span></a>
+<a class="sourceLine" id="cb3-16" data-line-number="16">p &lt;-</a>
+<a class="sourceLine" id="cb3-17" data-line-number="17"><span class="st">  </span><span class="kw"><a href="reference/makeHumann2Barplot.html">makeHumann2Barplot</a></span>(</a>
+<a class="sourceLine" id="cb3-18" data-line-number="18">    dat,</a>
+<a class="sourceLine" id="cb3-19" data-line-number="19">    <span class="dt">hide.legend =</span> F,</a>
+<a class="sourceLine" id="cb3-20" data-line-number="20">    <span class="dt">scale =</span> <span class="st">"pseudolog"</span>,</a>
+<a class="sourceLine" id="cb3-21" data-line-number="21">    <span class="dt">space =</span> <span class="st">"fixed"</span>,</a>
 <a class="sourceLine" id="cb3-22" data-line-number="22">  )</a>
 <a class="sourceLine" id="cb3-23" data-line-number="23"><span class="co"># show figure</span></a>
 <a class="sourceLine" id="cb3-24" data-line-number="24"><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/print">print</a></span>(p)</a></code></pre></div>
@@ -114,26 +114,25 @@
 <a class="sourceLine" id="cb4-6" data-line-number="6">        humann2_table,</a>
 <a class="sourceLine" id="cb4-7" data-line-number="7">        <span class="dt">metadata =</span> hmp1_<span class="dv">2</span>_metadata,</a>
 <a class="sourceLine" id="cb4-8" data-line-number="8">        <span class="dt">feature =</span> feature,</a>
-<a class="sourceLine" id="cb4-9" data-line-number="9">        <span class="dt">num.bugs =</span> <span class="dv">3</span>,</a>
-<a class="sourceLine" id="cb4-10" data-line-number="10">        <span class="dt">order.by =</span> <span class="st">"custom"</span>,</a>
-<a class="sourceLine" id="cb4-11" data-line-number="11">        <span class="dt">custom.order =</span> custom.order</a>
-<a class="sourceLine" id="cb4-12" data-line-number="12">      )</a>
-<a class="sourceLine" id="cb4-13" data-line-number="13">    p &lt;-</a>
-<a class="sourceLine" id="cb4-14" data-line-number="14"><span class="st">      </span><span class="kw"><a href="reference/makeHumann2Barplot.html">makeHumann2Barplot</a></span>(</a>
-<a class="sourceLine" id="cb4-15" data-line-number="15">        dat,</a>
-<a class="sourceLine" id="cb4-16" data-line-number="16">        <span class="dt">hide.legend =</span> F,</a>
-<a class="sourceLine" id="cb4-17" data-line-number="17">        <span class="dt">scale =</span> <span class="st">"pseudolog"</span>,</a>
-<a class="sourceLine" id="cb4-18" data-line-number="18">        <span class="dt">space =</span> <span class="st">"fixed"</span>,</a>
-<a class="sourceLine" id="cb4-19" data-line-number="19">        <span class="dt">bugs.colors =</span> <span class="kw">randomColor</span>(<span class="dt">count =</span> <span class="dv">3</span>)</a>
-<a class="sourceLine" id="cb4-20" data-line-number="20">      )</a>
+<a class="sourceLine" id="cb4-9" data-line-number="9">        <span class="dt">num.bugs =</span> <span class="st">"auto"</span>,</a>
+<a class="sourceLine" id="cb4-10" data-line-number="10">        <span class="dt">num.bugs.explained.fraction =</span> <span class="fl">0.25</span>,</a>
+<a class="sourceLine" id="cb4-11" data-line-number="11">        <span class="dt">order.by =</span> <span class="st">"custom"</span>,</a>
+<a class="sourceLine" id="cb4-12" data-line-number="12">        <span class="dt">custom.order =</span> custom.order</a>
+<a class="sourceLine" id="cb4-13" data-line-number="13">      )</a>
+<a class="sourceLine" id="cb4-14" data-line-number="14">    p &lt;-</a>
+<a class="sourceLine" id="cb4-15" data-line-number="15"><span class="st">      </span><span class="kw"><a href="reference/makeHumann2Barplot.html">makeHumann2Barplot</a></span>(</a>
+<a class="sourceLine" id="cb4-16" data-line-number="16">        dat,</a>
+<a class="sourceLine" id="cb4-17" data-line-number="17">        <span class="dt">hide.legend =</span> F,</a>
+<a class="sourceLine" id="cb4-18" data-line-number="18">        <span class="dt">scale =</span> <span class="st">"pseudolog"</span>,</a>
+<a class="sourceLine" id="cb4-19" data-line-number="19">        <span class="dt">space =</span> <span class="st">"fixed"</span></a>
+<a class="sourceLine" id="cb4-20" data-line-number="20">        )</a>
 <a class="sourceLine" id="cb4-21" data-line-number="21">    <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/print">print</a></span>(p)</a>
 <a class="sourceLine" id="cb4-22" data-line-number="22">  })</a>
 <a class="sourceLine" id="cb4-23" data-line-number="23">}</a>
 <a class="sourceLine" id="cb4-24" data-line-number="24"></a>
-<a class="sourceLine" id="cb4-25" data-line-number="25"><span class="kw"><a href="https://www.rdocumentation.org/packages/grDevices/topics/pdf">pdf</a></span>(<span class="st">"test_big.pdf"</span>, <span class="dt">width =</span> <span class="dv">6</span>, <span class="dt">height =</span> <span class="dv">10</span>)</a>
+<a class="sourceLine" id="cb4-25" data-line-number="25"><span class="kw"><a href="https://www.rdocumentation.org/packages/grDevices/topics/pdf">pdf</a></span>(<span class="st">"all_cas.pdf"</span>, <span class="dt">width =</span> <span class="dv">8</span>, <span class="dt">height =</span> <span class="dv">9</span>)</a>
 <a class="sourceLine" id="cb4-26" data-line-number="26"><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/print">print</a></span>(<span class="kw">multiplot</span>(<span class="dt">plotlist =</span> cas_plots, <span class="dt">cols =</span> <span class="dv">2</span>))</a>
 <a class="sourceLine" id="cb4-27" data-line-number="27"><span class="kw"><a href="https://www.rdocumentation.org/packages/grDevices/topics/dev">dev.off</a></span>()</a></code></pre></div>
-<p><img src="reference/figures/README-example-1.png"></p>
 </div>
 </div>
 <div id="license-and-copyright" class="section level2">

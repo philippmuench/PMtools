@@ -109,7 +109,8 @@ many features in one figure by limiting the number of statifications.</p>
     
     </div>
 
-    <pre class="usage"><span class='fu'>humann2Barplot</span>(<span class='no'>humann2.table</span>, <span class='kw'>num.bugs</span> <span class='kw'>=</span> <span class='fl'>3</span>, <span class='kw'>feature</span> <span class='kw'>=</span> <span class='st'>"Cas1"</span>,
+    <pre class="usage"><span class='fu'>humann2Barplot</span>(<span class='no'>humann2.table</span>, <span class='kw'>num.bugs</span> <span class='kw'>=</span> <span class='st'>"auto"</span>,
+  <span class='kw'>num.bugs.explained.fraction</span> <span class='kw'>=</span> <span class='fl'>0.25</span>, <span class='kw'>feature</span> <span class='kw'>=</span> <span class='st'>"Cas1"</span>,
   <span class='kw'>featue.column</span> <span class='kw'>=</span> <span class='fl'>1</span>, <span class='kw'>taxa.column</span> <span class='kw'>=</span> <span class='fl'>2</span>, <span class='no'>metadata</span>, <span class='kw'>metadata.id</span> <span class='kw'>=</span> <span class='fl'>9</span>,
   <span class='kw'>metadata.factor</span> <span class='kw'>=</span> <span class='fl'>4</span>, <span class='kw'>use.custom.column.stratification</span> <span class='kw'>=</span> <span class='no'>T</span>,
   <span class='kw'>order.by</span> <span class='kw'>=</span> <span class='st'>"bc"</span>, <span class='kw'>column.stratification.order</span> <span class='kw'>=</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/c'>c</a></span>(<span class='st'>"Oral"</span>, <span class='st'>"Skin"</span>,
@@ -124,7 +125,13 @@ many features in one figure by limiting the number of statifications.</p>
     </tr>
     <tr>
       <th>num.bugs</th>
-      <td><p>number of most abundant bugs to show as statification</p></td>
+      <td><p>number of most abundant bugs to show as statification, set to
+to "auto" if this should be ajusted based on num.bugs.explained.fraction</p></td>
+    </tr>
+    <tr>
+      <th>num.bugs.explained.fraction</th>
+      <td><p>fraction that needs to be explained by the
+number of bugs shown</p></td>
     </tr>
     <tr>
       <th>feature</th>
