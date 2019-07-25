@@ -4,7 +4,8 @@
 \alias{humann2Barplot}
 \title{humann2Barplot}
 \usage{
-humann2Barplot(humann2.table, num.bugs = 3, feature = "Cas1",
+humann2Barplot(humann2.table, num.bugs = "auto",
+  num.bugs.explained.fraction = 0.25, feature = "Cas1",
   featue.column = 1, taxa.column = 2, metadata, metadata.id = 9,
   metadata.factor = 4, use.custom.column.stratification = T,
   order.by = "bc", column.stratification.order = c("Oral", "Skin",
@@ -13,7 +14,11 @@ humann2Barplot(humann2.table, num.bugs = 3, feature = "Cas1",
 \arguments{
 \item{humann2.table}{a dataframe containing the HUMAnN2 output in tsv format}
 
-\item{num.bugs}{number of most abundant bugs to show as statification}
+\item{num.bugs}{number of most abundant bugs to show as statification, set to
+to "auto" if this should be ajusted based on num.bugs.explained.fraction}
+
+\item{num.bugs.explained.fraction}{fraction that needs to be explained by the
+number of bugs shown}
 
 \item{feature}{name of gene in humann2_table that will be plotted}
 
