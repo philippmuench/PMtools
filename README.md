@@ -46,42 +46,44 @@ dat <-
 p <-
   makeHumann2Barplot(
     dat,
+    last.plot = p,
     hide.legend = F,
     scale = "pseudolog",
     space = "fixed",
   )
 # show figure
-print(p)
+print(p$gplot)
 ```
 
 and to plot multiple features in one figure
 
 ``` r
 cas_plots <- vector('list', 10)
-for (feature in paste0("Cas", 1:10)) {
-  cas_plots[[feature]]  <- local({
+for (cas in paste0("Cas", 1:10)) {
+  cas_plots[[cas]]  <- local({
     dat <-
       humann2Barplot(
         humann2_table,
         metadata = hmp1_2_metadata,
-        feature = feature,
+        feature = cas,
         num.bugs = "auto",
-        num.bugs.explained.fraction = 0.25,
+        num.bugs.explained.fraction = 0.35,
         order.by = "custom",
         custom.order = custom.order
       )
     p <-
       makeHumann2Barplot(
         dat,
+        last.plot = p,
         hide.legend = F,
         scale = "pseudolog",
         space = "fixed"
         )
-    print(p)
+    print(p$gplot)
   })
 }
 
-pdf("all_cas.pdf", width = 8, height = 9)
+pdf("all_cas_35_color3.pdf", width = 8, height = 9)
 print(multiplot(plotlist = cas_plots, cols = 2))
 dev.off()
 ```
