@@ -5,7 +5,10 @@
 #' many features in one figure by limiting the number of statifications.
 #'
 #' @param humann2.table a dataframe containing the HUMAnN2 output in tsv format
-#' @param num.bugs number of most abundant bugs to show as statification
+#' @param num.bugs number of most abundant bugs to show as statification, set to
+#' to "auto" if this should be ajusted based on num.bugs.explained.fraction
+#' @param num.bugs.explained.fraction fraction that needs to be explained by the
+#' number of bugs shown
 #' @param feature name of gene in humann2_table that will be plotted
 #' @param featue.column index of column in humann2 table that holds the feature
 #' @param taxa.column index of column in humann2 table that holds the taxon infomation
@@ -19,7 +22,8 @@
 #' @param custom.order custom sample order
 #' @export
 humann2Barplot <- function(humann2.table,
-                           num.bugs = 3,
+                           num.bugs = "auto",
+                           num.bugs.explained.fraction = 0.25,
                            feature = "Cas1",
                            featue.column = 1,
                            taxa.column = 2,
@@ -52,6 +56,17 @@ humann2Barplot <- function(humann2.table,
     sort(humann2.classified$abundance,
          index.return = TRUE,
          decreasing = TRUE)
+
+  # if num.bugs set to "auto", get the number of bugs that explain 50% of variance
+  if (num.bugs == "auto") {
+    index <-
+      lapply(lst, "[", lst$x %in% unique(lst$x))
+    sorted <- humann2.classified[index$ix, ]
+    sorted$cum_abundance <- cumsum(sorted$abundance)
+    breakpoint <- sum(sorted$abundance) * num.bugs.explained.fraction
+    num.bugs <- min(which(sorted$cum_abundance > breakpoint))
+  }
+
   top.index <-
     lapply(lst, "[", lst$x %in% utils::head(unique(lst$x), num.bugs))
 
@@ -164,14 +179,17 @@ humann2Barplot <- function(humann2.table,
 #' @description Generates barplots statified by taxon and metadata
 #' @param dat table holding preprocessed humann2 information using `humann2Barplot`
 #' @param scale how to scale the height of bars, on default sqrt
-#' @param bugs.colors html color codes of bar plots, must be same length as num.bugs
+#' @param bugs.colors html color codes of bar plots, must be same length as num.bugs,
+#' if not set it will be picked automatically
+#' @param use.random.colors use randomcoloR instead of RColorBrewer
 #' @param hide.legend boolean information if ledgend should be included
 #' @param space free or fixed (x scale)
 #' @export
 makeHumann2Barplot <-
   function(dat,
            scale = "sqrt",
-           bugs.colors = c("#1b9e77", "#d95f02", "#7570b3"),
+           bugs.colors,
+           use.random.colors = T,
            hide.legend = T,
            space = "free") {
     unclassified.name <- "Unclassified"
@@ -263,11 +281,17 @@ makeHumann2Barplot <-
       p <- p + ggplot2::theme(legend.position =  c(0.5, 1))
     }
     # coloring
-    if (length(bugs.colors) < length(unique(dat$taxa)) - 2) {
-      message("Not enough colors provided, using RColorBrewer")
-      bugs.colors <-
-        RColorBrewer::brewer.pal(length(unique(dat$taxa)) - 2, "Set1")
+    if (use.random.colors) {
+      length(unique(dat$taxa))
+      bugs.colors <- randomcoloR::randomColor(count = as.integer(length(unique(dat$taxa)) - 2))
+    } else {
+      if (length(bugs.colors) < length(unique(dat$taxa)) - 2) {
+        message("Not enough colors provided, using RColorBrewer")
+        bugs.colors <-
+          RColorBrewer::brewer.pal(length(unique(dat$taxa)) - 2, "Set1")
+      }
     }
+
     cols <- c(bugs.colors, "grey80", "grey60")
     names(cols) <- c(taxon.names, other.name, unclassified.name)
     p <-

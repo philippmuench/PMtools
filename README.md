@@ -21,10 +21,11 @@ devtools::install_github("philippmuench/PMtools")
 # load example datasets
 data(humann2_table)
 data(hmp1_2_metadata)
-data(hmp1_2_metaphlan)
 ```
 
-command to generate a figure of a single feature
+![](man/figures/README-example-1.png)
+
+Command to generate a figure of a single feature. Set `num.bugs = "auto"` to automatically adjust the number of bugs needed to show 25% of RA
 
 ``` r
 # generate the sample order
@@ -35,11 +36,12 @@ dat <-
   humann2Barplot(
     humann2_table,
     metadata = hmp1_2_metadata,
-    feature = "Cas2",
-    num.bugs = 4,
+    feature = "Cas8",
+    num.bugs = "auto",
     order.by = "custom",
     custom.order = custom.order
   )
+  
 # generate the plot
 p <-
   makeHumann2Barplot(
@@ -47,7 +49,6 @@ p <-
     hide.legend = F,
     scale = "pseudolog",
     space = "fixed",
-    bugs.colors = randomColor(count = 4)
   )
 # show figure
 print(p)
@@ -64,7 +65,8 @@ for (feature in paste0("Cas", 1:10)) {
         humann2_table,
         metadata = hmp1_2_metadata,
         feature = feature,
-        num.bugs = 3,
+        num.bugs = "auto",
+        num.bugs.explained.fraction = 0.25,
         order.by = "custom",
         custom.order = custom.order
       )
@@ -73,19 +75,16 @@ for (feature in paste0("Cas", 1:10)) {
         dat,
         hide.legend = F,
         scale = "pseudolog",
-        space = "fixed",
-        bugs.colors = randomColor(count = 3)
-      )
+        space = "fixed"
+        )
     print(p)
   })
 }
 
-pdf("test_big.pdf", width = 6, height = 10)
+pdf("all_cas.pdf", width = 8, height = 9)
 print(multiplot(plotlist = cas_plots, cols = 2))
 dev.off()
 ```
-
-![](man/figures/README-example-1.png)
 
 ## License and copyright
 Copyright 2019 Philipp Münch
