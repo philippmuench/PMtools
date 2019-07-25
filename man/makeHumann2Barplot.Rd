@@ -4,7 +4,7 @@
 \alias{makeHumann2Barplot}
 \title{makeHumann2Barplot}
 \usage{
-makeHumann2Barplot(dat, scale = "sqrt", bugs.colors,
+makeHumann2Barplot(dat, last.plot, scale = "sqrt", bugs.colors,
   use.random.colors = T, hide.legend = T, space = "free")
 }
 \arguments{
@@ -20,6 +20,8 @@ if not set it will be picked automatically}
 \item{hide.legend}{boolean information if ledgend should be included}
 
 \item{space}{free or fixed (x scale)}
+
+\item{keep.colors}{true if colors should be returned and re-used}
 }
 \description{
 Generates barplots statified by taxon and metadata
