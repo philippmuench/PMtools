@@ -105,7 +105,7 @@
     
     </div>
 
-    <pre class="usage"><span class='fu'>makeHumann2Barplot</span>(<span class='no'>dat</span>, <span class='no'>last.plot</span>, <span class='kw'>scale</span> <span class='kw'>=</span> <span class='st'>"sqrt"</span>, <span class='no'>bugs.colors</span>,
+    <pre class="usage"><span class='fu'>makeHumann2Barplot</span>(<span class='no'>dat</span>, <span class='no'>last.plot.colors</span>, <span class='kw'>scale</span> <span class='kw'>=</span> <span class='st'>"sqrt"</span>,
   <span class='kw'>use.random.colors</span> <span class='kw'>=</span> <span class='no'>T</span>, <span class='kw'>hide.legend</span> <span class='kw'>=</span> <span class='no'>T</span>, <span class='kw'>space</span> <span class='kw'>=</span> <span class='st'>"free"</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
@@ -116,13 +116,12 @@
       <td><p>table holding preprocessed humann2 information using `humann2Barplot`</p></td>
     </tr>
     <tr>
-      <th>scale</th>
-      <td><p>how to scale the height of bars, on default sqrt</p></td>
+      <th>last.plot.colors</th>
+      <td><p>dataframe of plot colors</p></td>
     </tr>
     <tr>
-      <th>bugs.colors</th>
-      <td><p>html color codes of bar plots, must be same length as num.bugs,
-if not set it will be picked automatically</p></td>
+      <th>scale</th>
+      <td><p>how to scale the height of bars, on default sqrt</p></td>
     </tr>
     <tr>
       <th>use.random.colors</th>
@@ -135,10 +134,6 @@ if not set it will be picked automatically</p></td>
     <tr>
       <th>space</th>
       <td><p>free or fixed (x scale)</p></td>
-    </tr>
-    <tr>
-      <th>keep.colors</th>
-      <td><p>true if colors should be returned and re-used</p></td>
     </tr>
     </table>
     
