@@ -4,24 +4,21 @@
 \alias{makeHumann2Barplot}
 \title{makeHumann2Barplot}
 \usage{
-makeHumann2Barplot(dat, last.plot, scale = "sqrt", bugs.colors,
+makeHumann2Barplot(dat, last.plot.colors, scale = "sqrt",
   use.random.colors = T, hide.legend = T, space = "free")
 }
 \arguments{
 \item{dat}{table holding preprocessed humann2 information using `humann2Barplot`}
 
-\item{scale}{how to scale the height of bars, on default sqrt}
+\item{last.plot.colors}{dataframe of plot colors}
 
-\item{bugs.colors}{html color codes of bar plots, must be same length as num.bugs,
-if not set it will be picked automatically}
+\item{scale}{how to scale the height of bars, on default sqrt}
 
 \item{use.random.colors}{use randomcoloR instead of RColorBrewer}
 
 \item{hide.legend}{boolean information if ledgend should be included}
 
 \item{space}{free or fixed (x scale)}
-
-\item{keep.colors}{true if colors should be returned and re-used}
 }
 \description{
 Generates barplots statified by taxon and metadata

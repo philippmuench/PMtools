@@ -39,17 +39,17 @@ humann2Barplot <- function(humann2.table,
 
   # reduce table to relevant featue
   humann2.table <-
-    humann2.table[which(humann2.table[, featue.column] == feature),]
+    humann2.table[which(humann2.table[, featue.column] == feature), ]
   # get total abundance for feature for bugs
   humann2.table$abundance <-
     rowSums(humann2.table[, 3:ncol(humann2.table)])
 
   humann2.unclassified <-
-    humann2.table[which(humann2.table[, taxa.column] == "unclassified"),]
+    humann2.table[which(humann2.table[, taxa.column] == "unclassified"), ]
   # replace name of "unclassified" to "other"
   humann2.unclassified$taxa <- "Unclassified"
   humann2.classified <-
-    humann2.table[which(humann2.table[, taxa.column] != "unclassified"),]
+    humann2.table[which(humann2.table[, taxa.column] != "unclassified"), ]
 
   # get the top $bugs number of taxa in classified subset
   lst <-
@@ -61,7 +61,7 @@ humann2Barplot <- function(humann2.table,
   if (num.bugs == "auto") {
     index <-
       lapply(lst, "[", lst$x %in% unique(lst$x))
-    sorted <- humann2.classified[index$ix,]
+    sorted <- humann2.classified[index$ix, ]
     sorted$cum_abundance <- cumsum(sorted$abundance)
     breakpoint <-
       sum(sorted$abundance) * num.bugs.explained.fraction
@@ -73,12 +73,12 @@ humann2Barplot <- function(humann2.table,
 
   # set taxa description of all non-top taxa to "known"
   if (nrow(humann2.classified) > num.bugs) {
-    humann2.classified[-top.index$ix,][, taxa.column] <- "Other"
+    humann2.classified[-top.index$ix, ][, taxa.column] <- "Other"
   }
 
   # shorten taxa name
-  taxa.names <- humann2.classified[top.index$ix,][, taxa.column]
-  humann2.classified[top.index$ix,][, taxa.column] <-
+  taxa.names <- humann2.classified[top.index$ix, ][, taxa.column]
+  humann2.classified[top.index$ix, ][, taxa.column] <-
     PMtools::shortenTaxons(taxa.names)
 
   humann.top.bugs <- rbind(humann2.unclassified, humann2.classified)
@@ -107,7 +107,7 @@ humann2Barplot <- function(humann2.table,
       meta.samples <-
         metadata[which(metadata[, metadata.factor] == meta), metadata.id]
       meta.community <-
-        humann2.table[which(humann2.table[, featue.column] == feature), ]
+        humann2.table[which(humann2.table[, featue.column] == feature),]
       rownames(meta.community) <- meta.community[, taxa.column]
       # limit to e.g. one body site
       meta.community <-
@@ -179,19 +179,16 @@ humann2Barplot <- function(humann2.table,
 #'
 #' @description Generates barplots statified by taxon and metadata
 #' @param dat table holding preprocessed humann2 information using `humann2Barplot`
+#' @param last.plot.colors dataframe of plot colors
 #' @param scale how to scale the height of bars, on default sqrt
-#' @param bugs.colors html color codes of bar plots, must be same length as num.bugs,
-#' if not set it will be picked automatically
 #' @param use.random.colors use randomcoloR instead of RColorBrewer
 #' @param hide.legend boolean information if ledgend should be included
-#' @param keep.colors true if colors should be returned and re-used
 #' @param space free or fixed (x scale)
 #' @export
 makeHumann2Barplot <-
   function(dat,
-           last.plot,
+           last.plot.colors,
            scale = "sqrt",
-           bugs.colors,
            use.random.colors = T,
            hide.legend = T,
            space = "free") {
@@ -283,32 +280,46 @@ makeHumann2Barplot <-
     } else {
       p <- p + ggplot2::theme(legend.position =  c(0.5, 1))
     }
-    # coloring
-    if (use.random.colors) {
-      length(unique(dat$taxa))
-      bugs.colors <-
-        randomcoloR::randomColor(count = as.integer(length(unique(dat$taxa)) - 2))
-      bugs.colors.df <-
-        data.frame(taxa = unique(dat$taxa)[1:(length(unique(dat$taxa)) - 2)],
-                   color = bugs.colors, stringsAsFactors = F)
-    } else {
-      if (length(bugs.colors) < length(unique(dat$taxa)) - 2) {
-        message("Not enough colors provided, using RColorBrewer")
-        bugs.colors <-
-          RColorBrewer::brewer.pal(length(unique(dat$taxa)) - 2, "Set1")
-      }
-    }
-    # use color from last.plot
-    bugs.colors[match(as.character(last.plot$colors$taxa),
-                      as.character(unique(dat$taxa)))] <- as.character(last.plot$colors$color)
 
-    cols <- c(bugs.colors, "grey80", "grey60")
-    names(cols) <- c(taxon.names, other.name, unclassified.name)
+    # coloring
+    taxa_list <- unique(dat$taxa)
+    taxa_list <- taxa_list[taxa_list != other.name &
+                             taxa_list != unclassified.name]
+    if (use.random.colors) {
+      colors.df <-
+        data.frame(
+          taxa = taxa_list,
+          color = randomcoloR::randomColor(count = length(taxa_list)),
+          stringsAsFactors = F
+        )
+    } else {
+      colors.df <-
+        data.frame(taxa = taxa_list,
+                   color = RColorBrewer::brewer.pal(taxa_list, "Set1"))
+    }
+
+    # replace colors if needed
+    if (!missing(last.plot.colors) & !is.null(last.plot.colors)) {
+      colors.df$new <- last.plot.colors[match(colors.df$taxa, last.plot.colors$taxa),]$color
+      colors.df[which(is.na(colors.df$new)),]$new  <- colors.df[which(is.na(colors.df$new)),]$color
+      colors.df$color <- NULL
+      colnames(colors.df)[2] <- "color"
+    }
+
+    # add other and unclassified to colors
+    colors.df.extended <-
+      rbind(colors.df, data.frame(
+        taxa = c(other.name, unclassified.name),
+        color = c("grey80", "grey60")
+      ))
+
     p <-
-      p + ggplot2::scale_fill_manual(values =  cols, breaks = taxon.names)
+      p + ggplot2::scale_fill_manual(values =  colors.df.extended$color, breaks = colors.df.extended$taxa)
     p <-
-      p + ggplot2::guides(fill = ggplot2::guide_legend(title = "",
-                                                       ncol = length(taxon.names)))
+      p + ggplot2::guides(fill = ggplot2::guide_legend(
+        title = "",
+        ncol = length(colors.df.extended$taxa)
+      ))
 
     # remove facet_grid legend
     p <- p + ggplot2::theme(
@@ -321,7 +332,7 @@ makeHumann2Barplot <-
     # reduce legend point size
     p <-
       p + ggplot2::theme(legend.key.size = ggplot2::unit(0.2, "line"))
-    return(list("gplot" = p, "colors" = bugs.colors.df))
+    return(list("gplot" = p, "colors" = colors.df))
   }
 
 #' @title orderHumannBySimilarity
