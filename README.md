@@ -21,6 +21,7 @@ devtools::install_github("philippmuench/PMtools")
 # load example datasets
 data(humann2_table)
 data(hmp1_2_metadata)
+data(hmp1_2_metaphlan)
 ```
 
 ![](man/figures/README-example-1.png)
@@ -31,12 +32,13 @@ Command to generate a figure of a single feature. Set `num.bugs = "auto"` to aut
 # generate the sample order
 custom.order <-
   orderHumannBySimilarity(hmp1_2_metaphlan, distance.method = "bray")
+
 # generate the data used for plotting
 dat <-
   humann2Barplot(
     humann2_table,
     metadata = hmp1_2_metadata,
-    feature = "Cas8",
+    feature = "Cas2",
     num.bugs = "auto",
     order.by = "custom",
     custom.order = custom.order
@@ -46,19 +48,73 @@ dat <-
 p <-
   makeHumann2Barplot(
     dat,
-    last.plot = p,
+    p$colors,
     hide.legend = F,
     scale = "pseudolog",
-    space = "fixed",
+    space = "fixed"
   )
+
 # show figure
 print(p$gplot)
+```
+
+re-use colors
+
+``` r
+# generate the data used for plotting
+dat_plot1 <-
+  humann2Barplot(
+    humann2_table,
+    metadata = hmp1_2_metadata,
+    feature = "Cas1",
+    num.bugs = "auto",
+    order.by = "custom",
+    custom.order = custom.order
+  )
+  
+  # generate the data used for plotting
+dat_plot2 <-
+  humann2Barplot(
+    humann2_table,
+    metadata = hmp1_2_metadata,
+    feature = "Cas2",
+    num.bugs = "auto",
+    order.by = "custom",
+    custom.order = custom.order
+  )
+  
+# generate the plot
+p1 <-
+  makeHumann2Barplot(
+    dat_plot1,
+    hide.legend = F,
+    scale = "pseudolog",
+    space = "fixed"
+  )
+
+# generate the plot
+p2 <-
+  makeHumann2Barplot(
+    dat_plot2,
+    p1$colors,
+    hide.legend = F,
+    scale = "pseudolog",
+    space = "fixed"
+  )
+# same taxa now have the same color
+print(p1)
+print(p2)
 ```
 
 and to plot multiple features in one figure
 
 ``` r
+# generate global sample oder that will be used for each individual plot
+custom.order <-
+  orderHumannBySimilarity(hmp1_2_metaphlan, distance.method = "bray")
+
 cas_plots <- vector('list', 10)
+plot.colors <- NULL
 for (cas in paste0("Cas", 1:10)) {
   cas_plots[[cas]]  <- local({
     dat <-
@@ -74,16 +130,17 @@ for (cas in paste0("Cas", 1:10)) {
     p <-
       makeHumann2Barplot(
         dat,
-        last.plot = p,
+        plot.colors,
         hide.legend = F,
         scale = "pseudolog",
         space = "fixed"
         )
-    print(p$gplot)
+    plot.colors <<- rbind(plot.colors , p$colors)
+    print(p)
   })
 }
 
-pdf("all_cas_35_color3.pdf", width = 8, height = 9)
+pdf("all_cas.pdf", width = 8, height = 9)
 print(multiplot(plotlist = cas_plots, cols = 2))
 dev.off()
 ```
