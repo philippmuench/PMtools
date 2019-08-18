@@ -194,7 +194,7 @@ makeHumann2Barplot <-
            space = "free") {
     unclassified.name <- "Unclassified"
     other.name <- "Other"
-    message(paste(nrow(p$colors), "colors provided"))
+    message(paste(nrow(last.plot.colors$colors), "colors provided"))
     # get taxon names for coloring
     taxon.names <- unique(dat$taxa)
     if (length(grep(other.name, taxon.names)) > 0)
@@ -312,7 +312,7 @@ makeHumann2Barplot <-
         taxa = c(other.name, unclassified.name),
         color = c("grey80", "grey60")
       ))
-
+    write.table(file= "log.txt", colors.df.extended, sep="\t", quote=F)
     p <-
       p + ggplot2::scale_fill_manual(values =  colors.df.extended$color, breaks = colors.df.extended$taxa)
     p <-

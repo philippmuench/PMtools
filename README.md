@@ -140,10 +140,17 @@ for (cas in paste0("Cas", 1:10)) {
   })
 }
 
-pdf("all_cas.pdf", width = 8, height = 9)
+# you can plot these together
+pdf("all_cas.pdf", width = 6, height = 7)
 print(multiplot(plotlist = cas_plots, cols = 2))
 dev.off()
+
+# or access each plot individually 
+print(cas_plots[["Cas1"]])
+# and the data underlying the plot
+cas_plots[["Cas1"]]$dat
 ```
+
 
 ## License and copyright
 Copyright 2019 Philipp Münch
