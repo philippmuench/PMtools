@@ -312,7 +312,7 @@ makeHumann2Barplot <-
         taxa = c(other.name, unclassified.name),
         color = c("grey80", "grey60")
       ))
-    write.table(file= "log.txt", colors.df.extended, sep="\t", quote=F)
+    #write.table(file =  "log.txt", colors.df.extended, sep = "\t", quote = F, append = T)
     p <-
       p + ggplot2::scale_fill_manual(values =  colors.df.extended$color, breaks = colors.df.extended$taxa)
     p <-

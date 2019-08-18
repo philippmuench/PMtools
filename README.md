@@ -48,7 +48,7 @@ dat <-
 p <-
   makeHumann2Barplot(
     dat,
-    p$colors,
+    NULL,
     hide.legend = F,
     scale = "pseudolog",
     space = "fixed"
@@ -72,7 +72,7 @@ dat_plot1 <-
     custom.order = custom.order
   )
   
-  # generate the data used for plotting
+# generate the data used for plotting
 dat_plot2 <-
   humann2Barplot(
     humann2_table,
@@ -87,6 +87,7 @@ dat_plot2 <-
 p1 <-
   makeHumann2Barplot(
     dat_plot1,
+    NULL,
     hide.legend = F,
     scale = "pseudolog",
     space = "fixed"
@@ -102,17 +103,13 @@ p2 <-
     space = "fixed"
   )
 # same taxa now have the same color
-print(p1)
-print(p2)
+print(p1$gplot)
+print(p2$gplot)
 ```
 
-and to plot multiple features in one figure
+you can also plot multiple features into one figure
 
 ``` r
-# generate global sample oder that will be used for each individual plot
-custom.order <-
-  orderHumannBySimilarity(hmp1_2_metaphlan, distance.method = "bray")
-
 cas_plots <- vector('list', 10)
 plot.colors <- NULL
 for (cas in paste0("Cas", 1:10)) {
@@ -135,8 +132,10 @@ for (cas in paste0("Cas", 1:10)) {
         scale = "pseudolog",
         space = "fixed"
         )
-    plot.colors <<- rbind(plot.colors , p$colors)
-    print(p)
+    plot.colors <<- rbind(plot.colors, p$colors)
+    write.table(p$colors, file="log.txt", append=T, sep ="\t", row.names=F,
+    col.names=F, quote=F)
+    print(p$gplot)
   })
 }
 
