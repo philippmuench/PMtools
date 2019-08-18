@@ -185,9 +185,15 @@
 <a class="sourceLine" id="cb5-29" data-line-number="29">  })</a>
 <a class="sourceLine" id="cb5-30" data-line-number="30">}</a>
 <a class="sourceLine" id="cb5-31" data-line-number="31"></a>
-<a class="sourceLine" id="cb5-32" data-line-number="32"><span class="kw"><a href="https://www.rdocumentation.org/packages/grDevices/topics/pdf">pdf</a></span>(<span class="st">"all_cas.pdf"</span>, <span class="dt">width =</span> <span class="dv">8</span>, <span class="dt">height =</span> <span class="dv">9</span>)</a>
-<a class="sourceLine" id="cb5-33" data-line-number="33"><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/print">print</a></span>(<span class="kw">multiplot</span>(<span class="dt">plotlist =</span> cas_plots, <span class="dt">cols =</span> <span class="dv">2</span>))</a>
-<a class="sourceLine" id="cb5-34" data-line-number="34"><span class="kw"><a href="https://www.rdocumentation.org/packages/grDevices/topics/dev">dev.off</a></span>()</a></code></pre></div>
+<a class="sourceLine" id="cb5-32" data-line-number="32"><span class="co"># you can plot these together</span></a>
+<a class="sourceLine" id="cb5-33" data-line-number="33"><span class="kw"><a href="https://www.rdocumentation.org/packages/grDevices/topics/pdf">pdf</a></span>(<span class="st">"all_cas.pdf"</span>, <span class="dt">width =</span> <span class="dv">6</span>, <span class="dt">height =</span> <span class="dv">7</span>)</a>
+<a class="sourceLine" id="cb5-34" data-line-number="34"><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/print">print</a></span>(<span class="kw">multiplot</span>(<span class="dt">plotlist =</span> cas_plots, <span class="dt">cols =</span> <span class="dv">2</span>))</a>
+<a class="sourceLine" id="cb5-35" data-line-number="35"><span class="kw"><a href="https://www.rdocumentation.org/packages/grDevices/topics/dev">dev.off</a></span>()</a>
+<a class="sourceLine" id="cb5-36" data-line-number="36"></a>
+<a class="sourceLine" id="cb5-37" data-line-number="37"><span class="co"># or access each plot individually </span></a>
+<a class="sourceLine" id="cb5-38" data-line-number="38"><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/print">print</a></span>(cas_plots[[<span class="st">"Cas1"</span>]])</a>
+<a class="sourceLine" id="cb5-39" data-line-number="39"><span class="co"># and the data underlying the plot</span></a>
+<a class="sourceLine" id="cb5-40" data-line-number="40">cas_plots[[<span class="st">"Cas1"</span>]]<span class="op">$</span>dat</a></code></pre></div>
 </div>
 </div>
 <div id="license-and-copyright" class="section level2">
