@@ -180,7 +180,7 @@ humann2Barplot <- function(humann2.table,
 #' @description Generates barplots statified by taxon and metadata
 #' @param dat table holding preprocessed humann2 information using `humann2Barplot`
 #' @param last.plot.colors dataframe of plot colors
-#' @param scale how to scale the height of bars, on default sqrt
+#' @param scale how to scale the height of bars, on default proportional-log
 #' @param use.random.colors use randomcoloR instead of RColorBrewer
 #' @param hide.legend boolean information if ledgend should be included
 #' @param space free or fixed (x scale)
@@ -188,7 +188,7 @@ humann2Barplot <- function(humann2.table,
 makeHumann2Barplot <-
   function(dat,
            last.plot.colors,
-           scale = "sqrt",
+           scale = "proportional-log",
            use.random.colors = T,
            hide.legend = T,
            space = "free") {
@@ -203,12 +203,30 @@ makeHumann2Barplot <-
       taxon.names <-
       taxon.names[which(taxon.names != unclassified.name)]
 
+    # scaling value transformation
     if (scale == "log10+1") {
+      message("using log10(dat$value + 1)")
       dat$value <- log10(dat$value + 1)
     }
     if (scale == "pseudolog") {
+      message("using PMtools::pseudoLog10(dat$value)")
       dat$value <- PMtools::pseudoLog10(dat$value)
     }
+    if (scale == "proportional-log") {
+      # remove stratification
+      dat$match <- paste0(dat$variable, dat$meta)
+      dat.no.taxon.strata <-  stats::aggregate(value ~ SRS + variable + meta + match,
+                                        data = dat,
+                                        FUN = sum)
+      # do log10 on non-stratified table
+      dat.no.taxon.strata$log10 <- log10(dat.no.taxon.strata$value)
+      # map back aggreageted values to dat
+      dat$agg <- dat.no.taxon.strata[match(dat$match, dat.no.taxon.strata$match),]$value
+      dat$agg_log <- dat.no.taxon.strata[match(dat$match, dat.no.taxon.strata$match),]$log10
+      # calculate back the proportion
+      dat$value <- (dat$value / dat$agg) * dat$agg_log
+    }
+
     order.levels <- c(taxon.names, other.name, unclassified.name)
     p <-
       ggplot2::ggplot(dat = dat, ggplot2::aes(
@@ -217,8 +235,10 @@ makeHumann2Barplot <-
         fill = factor(taxa, levels = order.levels)
       ))
     p <- p + ggplot2::geom_bar(stat = "identity")
-    # p <- p + ggplot2::ggtitle(dat[1, 1])
+
+    # scaling axis manipulation
     if (scale == "sqrt") {
+      message("using ggplot2::scale_y_sqrt()")
       p <- p + ggplot2::scale_y_sqrt(
         expand = c(0, 0),
         breaks = function(x)
@@ -246,7 +266,18 @@ makeHumann2Barplot <-
           ))))
       )
       p <- p + ggplot2::ylab("abundance (log10+1)")
+    } else if (scale == "none") {
+      message("using no scaling")
+      p <- p + ggplot2::ylab("abundance (no scaling)")
+    } else if (scale == "proportional-log") {
+      message("using propotional log")
+      p <- p + ggplot2::ylab("log10")
+    } else if (scale == "ggplot2-log10") {
+      message("using ggplot2 log10 axis scaling")
+      p <- p + ggplot2::scale_y_log10()
+      p <- p + ggplot2::ylab("abundance (ggplot2 scaling)")
     } else {
+      message("using no scaling but adjust breaks that it looks pretty")
       p <- p + ggplot2::scale_y_continuous(
         expand = c(0, 0),
         breaks = function(x)
@@ -256,6 +287,7 @@ makeHumann2Barplot <-
       )
       p <- p + ggplot2::ylab("abundance")
     }
+
 
     p <- p + PMtools::themePM(base.size = 7, axis.family = "mono")
     p <- p + ggplot2::theme(
@@ -333,38 +365,4 @@ makeHumann2Barplot <-
     p <-
       p + ggplot2::theme(legend.key.size = ggplot2::unit(0.2, "line"))
     return(list("gplot" = p, "colors" = colors.df))
-  }
-
-#' @title orderHumannBySimilarity
-#'
-#' @description outputs order of samples by bray curtis
-#' @param metaphlan MetaPhlAn2 table
-#' @param distance.method Dissimilarity index, partial match to "manhattan", "euclidean", "canberra", "clark", "bray", "kulczynski", "jaccard", "gower", "altGower", "morisita", "horn", "mountford", "raup", "binomial", "chao", "cao" or "mahalanobis".
-#' @param cluster.method The agglomeration method to be used. This should be (an unambiguous abbreviation of) one of "ward.D", "ward.D2", "single", "complete", "average" (= UPGMA), "mcquitty" (= WPGMA), "median" (= WPGMC) or "centroid" (= UPGMC).
-#' @export
-orderHumannBySimilarity <-
-  function(metaphlan,
-           distance.method = "bray",
-           cluster.method = "single") {
-    # generate community matrix
-
-    meta.community <- as.data.frame(metaphlan)
-    rownames(meta.community) <- meta.community$taxa
-    meta.community$taxa <- NULL
-
-    meta.community.t <- data.table::transpose(meta.community)
-    colnames(meta.community.t) <- meta.community$taxa
-    rownames(meta.community.t) <- colnames(meta.community)
-
-    bc <-
-      as.matrix(vegan::vegdist(meta.community.t, method = distance.method))
-
-    bc[is.na(bc)] <- 0
-    bc.clusters <-
-      stats::hclust(stats::as.dist(bc), method = cluster.method)
-    bc.order.index <-
-      stats::order.dendrogram(stats::as.dendrogram(bc.clusters))
-
-    ordering <- rownames(meta.community.t)[bc.order.index]
-    return(ordering)
   }
