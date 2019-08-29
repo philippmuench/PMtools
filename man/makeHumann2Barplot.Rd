@@ -4,7 +4,7 @@
 \alias{makeHumann2Barplot}
 \title{makeHumann2Barplot}
 \usage{
-makeHumann2Barplot(dat, last.plot.colors, scale = "sqrt",
+makeHumann2Barplot(dat, last.plot.colors, scale = "proportional-log",
   use.random.colors = T, hide.legend = T, space = "free")
 }
 \arguments{
@@ -12,7 +12,7 @@ makeHumann2Barplot(dat, last.plot.colors, scale = "sqrt",
 
 \item{last.plot.colors}{dataframe of plot colors}
 
-\item{scale}{how to scale the height of bars, on default sqrt}
+\item{scale}{how to scale the height of bars, on default proportional-log}
 
 \item{use.random.colors}{use randomcoloR instead of RColorBrewer}
 
