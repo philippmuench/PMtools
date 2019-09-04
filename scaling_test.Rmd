@@ -1,0 +1,194 @@
+---
+title: "scaling overview"
+date: "`r Sys.Date()`"
+author: "Philipp C. Münch"
+output:
+  html_document:
+    highlight: pygments
+    number_sections: yes
+    theme: sandstone
+    toc: yes
+    toc_depth: 2
+    toc_float:
+      collapsed: no
+      smooth_scroll: yes
+editor_options: 
+  chunk_output_type: console
+---
+# compare two humann tables
+
+```{r}
+
+a <- as.data.frame(read.table("tmp/unrief90_aws_cas_joined_cpm_edited.tsv", header = T, sep = '\t', stringsAsFactors = F))
+dim(a)
+a_1 <- a[which(a$SRS == "Cas1"),]
+a_1_i <- a_1[which(a_1$taxa == "g__Lactobacillus.s__Lactobacillus_iners"),]
+a_1_i$SRS <- NULL
+a_1_i$taxa <- NULL
+e <- as.data.frame(t(a_1_i))
+
+b <- as.data.frame(read.table("data-raw/humann2_table.tsv", header = T, sep = '\t', stringsAsFactors = F))
+dim(b)
+
+b_1 <- b[which(b$SRS == "Cas1"),]
+b_1_i <- b_1[which(b_1$taxa == "g__Lactobacillus|s__Lactobacillus_iners"),]
+b_1_i$SRS <- NULL
+b_1_i$taxa <- NULL
+d <- as.data.frame(t(b_1_i))
+```
+
+# overview of scaling functions
+
+load data and generate ordering
+
+```{r load data}
+library(PMtools)
+# load example datasets
+data(humann2_table)
+data(hmp1_2_metadata)
+data(hmp1_2_metaphlan)
+
+# generate the sample order
+custom.order <-
+  orderHumannBySimilarity(hmp1_2_metaphlan, distance.method = "bray")
+
+# generate the data used for plotting
+dat <-
+  humann2Barplot(
+    humann2_table,
+    metadata = hmp1_2_metadata,
+    feature = "Cas5",
+    num.bugs = "auto",
+    order.by = "custom",
+    custom.order = custom.order
+  )
+```
+
+# linear scaled
+
+## humann2_barplot
+
+```{bash, eval=F}
+humann2_barplot --input /Users/pmuench/Library/Mobile\ Documents/com\~apple\~CloudDocs/Projekte/HMP_CRISPR/figure5_cas/unrief90_aws_cas_joined_cpm.tsv  -f "Cas1" -s similarity metadata -m STArea -e 0.8 -t 10 --scaling none --colormap Spectral --output cas1_no_sclae.png
+```
+
+![cas1](cas1_no_sclae.png)
+
+## PMtools
+
+```{r plot no-scaling, fig.width = 6, fig.asp = 0.5}
+p1 <-
+  makeHumann2Barplot(
+    dat,
+    NULL,
+    hide.legend = F,
+    scale = "none",
+    space = "fixed"
+  )
+
+print(p1)
+```
+
+# log10 scaled
+
+## humann2_barplot
+
+```{bash, eval=F}
+humann2_barplot --input /Users/pmuench/Library/Mobile\ Documents/com\~apple\~CloudDocs/Projekte/HMP_CRISPR/figure5_cas/unrief90_aws_cas_joined_cpm.tsv  -f "Cas1" -s similarity metadata -m STArea -e 0.8 -t 10 --scaling pseudolog --colormap Spectral --output cas1_pseudolog.png
+```
+
+![cas1](cas1_pseudolog.png)
+
+## PMtools new
+
+based on log10 scaling of aggregated strata and proportional coloring
+
+```{r plot proportional-log, fig.width = 6, fig.asp = 0.5}
+p <-
+  makeHumann2Barplot(
+    dat,
+    p1$colors,
+    hide.legend = F,
+    scale = "proportional-log",
+    space = "fixed"
+  )
+
+print(p)
+```
+
+## PMtools old
+
+based on `asinh(x/2)/log(10)`
+
+```{r plot pseudolog, fig.width = 6, fig.asp = 0.5}
+p <-
+  makeHumann2Barplot(
+    dat,
+    p1$colors,
+    hide.legend = F,
+    scale = "pseudolog",
+    space = "fixed"
+  )
+
+print(p)
+```
+
+### ggplot2 insternal log10 scaling
+
+based on`ggplot2::scale_y_log10()`
+
+```{r plot ggplot2, fig.width = 6, fig.asp = 0.5}
+p <-
+  makeHumann2Barplot(
+    dat,
+    p1$colors,
+    hide.legend = F,
+    scale = "ggplot2-log10",
+    space = "fixed"
+  )
+
+print(p)
+```
+
+# all Cas genes
+
+```{r}
+cas_plots <- vector('list', 10)
+plot.colors <- NULL
+for (cas in paste0("Cas", 1:10)) {
+  cas_plots[[cas]]  <- local({
+    dat <-
+      humann2Barplot(
+        humann2_table,
+        metadata = hmp1_2_metadata,
+        feature = cas,
+        num.bugs = "auto",
+        num.bugs.explained.fraction = 0.35,
+        order.by = "custom",
+        custom.order = custom.order
+      )
+    p <-
+      makeHumann2Barplot(
+        dat,
+        plot.colors,
+        hide.legend = F,
+        scale = "proportional-log",
+        space = "fixed"
+        )
+    plot.colors <<- rbind(plot.colors, p$colors)
+    write.table(p$colors, file = "log.txt", append = T, sep = "\t", row.names = F,
+    col.names = F, quote = F)
+    print(p$gplot)
+  })
+}
+
+png("all_cas_floor.png", width = 600, height = 900)
+print(multiplot(plotlist = cas_plots, cols = 2))
+dev.off()
+
+pdf("all_cas_floor.pdf", height = 5, width = 7)
+print(multiplot(plotlist = cas_plots, cols = 2))
+dev.off()
+```
+
+![all_cas1](all_cas.png)
