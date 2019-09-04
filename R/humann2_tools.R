@@ -194,7 +194,6 @@ makeHumann2Barplot <-
            space = "free") {
     unclassified.name <- "Unclassified"
     other.name <- "Other"
-    message(paste(nrow(last.plot.colors$colors), "colors provided"))
     # get taxon names for coloring
     taxon.names <- unique(dat$taxa)
     if (length(grep(other.name, taxon.names)) > 0)
@@ -214,17 +213,59 @@ makeHumann2Barplot <-
     }
     if (scale == "proportional-log") {
       # remove stratification
-      dat$match <- paste0(dat$variable, dat$meta)
-      dat.no.taxon.strata <-  stats::aggregate(value ~ SRS + variable + meta + match,
-                                        data = dat,
-                                        FUN = sum)
-      # do log10 on non-stratified table
-      dat.no.taxon.strata$log10 <- log10(dat.no.taxon.strata$value)
-      # map back aggreageted values to dat
-      dat$agg <- dat.no.taxon.strata[match(dat$match, dat.no.taxon.strata$match),]$value
-      dat$agg_log <- dat.no.taxon.strata[match(dat$match, dat.no.taxon.strata$match),]$log10
-      # calculate back the proportion
-      dat$value <- (dat$value / dat$agg) * dat$agg_log
+      rescale <- TRUE
+      if (rescale) {
+        c_epsilon <- 1e-10
+
+        dat$match <- paste0(dat$variable, dat$meta)
+
+        # aggregate by sample
+        dat.no.taxon.strata <-  stats::aggregate(value ~ SRS + variable + meta + match,
+                                                 data = dat,
+                                                 FUN = sum)
+
+        table.colsums <-  dat.no.taxon.strata$value
+        ymin <- min(table.colsums[which(table.colsums > 0)])
+        floor <- floor(log10(ymin))
+
+        if (log10(ymin) - floor < c_epsilon) {
+          floor <- floor - 1
+        }
+        floors <-  rep(floor , length(table.colsums))
+
+        dat.no.taxon.strata$crests <- dat.no.taxon.strata$value
+
+        # log10 values that are > 0.01
+        dat.no.taxon.strata$crests[which(dat.no.taxon.strata$crests > 10**floor)] <- log10(dat.no.taxon.strata$crests[which(dat.no.taxon.strata$crests > 10**floor)])
+        # floor values that are < 0.01
+        dat.no.taxon.strata$crests[which( dat.no.taxon.strata$crests <= 10**floor)] <- floor
+
+        dat.no.taxon.strata$heights <- dat.no.taxon.strata$crests - floor
+        dat$agg <- dat.no.taxon.strata[match(dat$match, dat.no.taxon.strata$match),]$value
+        dat$agg_heights <- dat.no.taxon.strata[match(dat$match, dat.no.taxon.strata$match),]$heights
+
+        dat$value <- (dat$value / dat$agg) * dat$agg_heights
+        ymax <- ceiling(log10(max(dat[which(dat$agg > 0),]$agg)))
+
+      } else {
+        dat$match <- paste0(dat$variable, dat$meta)
+
+        # aggregate by sample
+        dat.no.taxon.strata <-  stats::aggregate(value ~ SRS + variable + meta + match,
+                                                 data = dat,
+                                                 FUN = sum)
+        dat.no.taxon.strata$log10 <- log10(dat.no.taxon.strata$value)
+        ## do log10 on non-stratified table
+        #dat.no.taxon.strata <- dat.no.taxon.strata[which(dat.no.taxon.strata$value > 0),]
+
+        dat$agg <- dat.no.taxon.strata[match(dat$match, dat.no.taxon.strata$match),]$value
+        dat$agg_log <- dat.no.taxon.strata[match(dat$match, dat.no.taxon.strata$match),]$log10
+
+        # calculate back the proportion
+        dat$value <- (dat$value / dat$agg) * dat$agg_log
+
+      }
+
     }
 
     order.levels <- c(taxon.names, other.name, unclassified.name)
@@ -246,6 +287,7 @@ makeHumann2Barplot <-
             0, (max(x) + 1) * 1.1
           ))))
       )
+
       p <- p + ggplot2::ylab("abundance (sqrt)")
     } else if (scale == "pseudolog") {
       p <- p + ggplot2::scale_y_continuous(
@@ -271,6 +313,29 @@ makeHumann2Barplot <-
       p <- p + ggplot2::ylab("abundance (no scaling)")
     } else if (scale == "proportional-log") {
       message("using propotional log")
+      if (rescale) {
+        print(floor)
+
+        breaks_fun <-  function(x){
+          unique(floor(pretty(seq(
+            0, (max(x) + 1) * 1.1
+          ))))
+        }
+
+        labels_fun <-  function(x){
+          print(x + floor)
+        }
+
+        p <- p + ggplot2::scale_y_continuous(
+          expand = c(0, 0),
+          labels = labels_fun,
+          breaks = breaks_fun)
+
+
+        #  # Change y tick mark labels
+        #   p <- p + ggplot2::scale_y_discrete(breaks = c(0:ymax),
+        #                       labels = c(rep("aaa",length(0:ymax) )))
+      }
       p <- p + ggplot2::ylab("log10")
     } else if (scale == "ggplot2-log10") {
       message("using ggplot2 log10 axis scaling")
