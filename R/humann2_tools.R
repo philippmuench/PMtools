@@ -18,6 +18,8 @@
 #' @param use.custom.column.stratification custom orderin of row statification
 #' @param order.by how to order bars within one statification
 #' @param column.stratification.order oder of entries in metadata.factor
+#' @param last.plot.colors dataframe of plot colors for additional cross-lookup of taxa
+
 #'   information
 #' @param custom.order custom sample order
 #' @export
@@ -33,23 +35,24 @@ humann2Barplot <- function(humann2.table,
                            use.custom.column.stratification = T,
                            order.by = "bc",
                            column.stratification.order =  c("Oral",  "Skin", "Vaginal", "Gut"),
-                           custom.order) {
+                           custom.order,
+                           last.plot.colors = NULL) {
   stopifnot(num.bugs > 0)
   stopifnot(any(humann2.table[, 1] == feature)) # feature is not in table
 
   # reduce table to relevant featue
   humann2.table <-
-    humann2.table[which(humann2.table[, featue.column] == feature), ]
+    humann2.table[which(humann2.table[, featue.column] == feature),]
   # get total abundance for feature for bugs
   humann2.table$abundance <-
     rowSums(humann2.table[, 3:ncol(humann2.table)])
 
   humann2.unclassified <-
-    humann2.table[which(humann2.table[, taxa.column] == "unclassified"), ]
+    humann2.table[which(humann2.table[, taxa.column] == "unclassified"),]
   # replace name of "unclassified" to "other"
   humann2.unclassified$taxa <- "Unclassified"
   humann2.classified <-
-    humann2.table[which(humann2.table[, taxa.column] != "unclassified"), ]
+    humann2.table[which(humann2.table[, taxa.column] != "unclassified"),]
 
   # get the top $bugs number of taxa in classified subset
   lst <-
@@ -57,11 +60,11 @@ humann2Barplot <- function(humann2.table,
          index.return = TRUE,
          decreasing = TRUE)
 
-  # if num.bugs set to "auto", get the number of bugs that explain 50% of variance
+  # if num.bugs set to "auto", get the number of bugs that explain num.bugs.explained.fraction% of variance
   if (num.bugs == "auto") {
     index <-
       lapply(lst, "[", lst$x %in% unique(lst$x))
-    sorted <- humann2.classified[index$ix, ]
+    sorted <- humann2.classified[index$ix,]
     sorted$cum_abundance <- cumsum(sorted$abundance)
     breakpoint <-
       sum(sorted$abundance) * num.bugs.explained.fraction
@@ -72,13 +75,22 @@ humann2Barplot <- function(humann2.table,
     lapply(lst, "[", lst$x %in% utils::head(unique(lst$x), num.bugs))
 
   # set taxa description of all non-top taxa to "known"
-  if (nrow(humann2.classified) > num.bugs) {
-    humann2.classified[-top.index$ix, ][, taxa.column] <- "Other"
+  if (is.null(last.plot.colors)) { # set all other taxa to "other"
+    if (nrow(humann2.classified) > num.bugs) {
+      humann2.classified[-top.index$ix,][, taxa.column] <- "Other"
+    }
+  } else { # set all other taxa to "other" except if they are in last.plot.colors
+    # check for overlap of taxa
+   match.vector <- match(PMtools::shortenTaxons(humann2.classified[, taxa.column]), last.plot.colors$taxa)
+   if (any(!is.na(match.vector))) {
+     top.index$ix <- unique(c(which(!is.na(match.vector))), top.index$ix)
+     humann2.classified[-top.index$ix,][, taxa.column] <- "Other"
+     }
   }
 
   # shorten taxa name
-  taxa.names <- humann2.classified[top.index$ix, ][, taxa.column]
-  humann2.classified[top.index$ix, ][, taxa.column] <-
+  taxa.names <- humann2.classified[top.index$ix,][, taxa.column]
+  humann2.classified[top.index$ix,][, taxa.column] <-
     PMtools::shortenTaxons(taxa.names)
 
   humann.top.bugs <- rbind(humann2.unclassified, humann2.classified)
@@ -107,7 +119,7 @@ humann2Barplot <- function(humann2.table,
       meta.samples <-
         metadata[which(metadata[, metadata.factor] == meta), metadata.id]
       meta.community <-
-        humann2.table[which(humann2.table[, featue.column] == feature),]
+        humann2.table[which(humann2.table[, featue.column] == feature), ]
       rownames(meta.community) <- meta.community[, taxa.column]
       # limit to e.g. one body site
       meta.community <-
@@ -191,9 +203,11 @@ makeHumann2Barplot <-
            scale = "proportional-log",
            use.random.colors = T,
            hide.legend = T,
-           space = "free") {
+           space = "free",
+           show.all.taxa = T) {
     unclassified.name <- "Unclassified"
     other.name <- "Other"
+
     # get taxon names for coloring
     taxon.names <- unique(dat$taxa)
     if (length(grep(other.name, taxon.names)) > 0)
@@ -201,6 +215,7 @@ makeHumann2Barplot <-
     if (length(grep(unclassified.name, taxon.names)) > 0)
       taxon.names <-
       taxon.names[which(taxon.names != unclassified.name)]
+
 
     # scaling value transformation
     if (scale == "log10+1") {
@@ -216,13 +231,12 @@ makeHumann2Barplot <-
       rescale <- TRUE
       if (rescale) {
         c_epsilon <- 1e-10
-
         dat$match <- paste0(dat$variable, dat$meta)
-
         # aggregate by sample
-        dat.no.taxon.strata <-  stats::aggregate(value ~ SRS + variable + meta + match,
-                                                 data = dat,
-                                                 FUN = sum)
+        dat.no.taxon.strata <-
+          stats::aggregate(value ~ SRS + variable + meta + match,
+                           data = dat,
+                           FUN = sum)
 
         table.colsums <-  dat.no.taxon.strata$value
         ymin <- min(table.colsums[which(table.colsums > 0)])
@@ -232,40 +246,47 @@ makeHumann2Barplot <-
           floor <- floor - 1
         }
         floors <-  rep(floor , length(table.colsums))
-
         dat.no.taxon.strata$crests <- dat.no.taxon.strata$value
-
         # log10 values that are > 0.01
-        dat.no.taxon.strata$crests[which(dat.no.taxon.strata$crests > 10**floor)] <- log10(dat.no.taxon.strata$crests[which(dat.no.taxon.strata$crests > 10**floor)])
+        dat.no.taxon.strata$crests[which(dat.no.taxon.strata$crests > 10 **
+                                           floor)] <-
+          log10(dat.no.taxon.strata$crests[which(dat.no.taxon.strata$crests > 10 **
+                                                   floor)])
         # floor values that are < 0.01
-        dat.no.taxon.strata$crests[which( dat.no.taxon.strata$crests <= 10**floor)] <- floor
+        dat.no.taxon.strata$crests[which(dat.no.taxon.strata$crests <= 10 **
+                                           floor)] <- floor
 
-        dat.no.taxon.strata$heights <- dat.no.taxon.strata$crests - floor
-        dat$agg <- dat.no.taxon.strata[match(dat$match, dat.no.taxon.strata$match),]$value
-        dat$agg_heights <- dat.no.taxon.strata[match(dat$match, dat.no.taxon.strata$match),]$heights
+        dat.no.taxon.strata$heights <-
+          dat.no.taxon.strata$crests - floor
+        dat$agg <-
+          dat.no.taxon.strata[match(dat$match, dat.no.taxon.strata$match), ]$value
+        dat$agg_heights <-
+          dat.no.taxon.strata[match(dat$match, dat.no.taxon.strata$match), ]$heights
 
         dat$value <- (dat$value / dat$agg) * dat$agg_heights
-        ymax <- ceiling(log10(max(dat[which(dat$agg > 0),]$agg)))
+        ymax <- ceiling(log10(max(dat[which(dat$agg > 0), ]$agg)))
 
       } else {
         dat$match <- paste0(dat$variable, dat$meta)
 
         # aggregate by sample
-        dat.no.taxon.strata <-  stats::aggregate(value ~ SRS + variable + meta + match,
-                                                 data = dat,
-                                                 FUN = sum)
-        dat.no.taxon.strata$log10 <- log10(dat.no.taxon.strata$value)
+        dat.no.taxon.strata <-
+          stats::aggregate(value ~ SRS + variable + meta + match,
+                           data = dat,
+                           FUN = sum)
+        dat.no.taxon.strata$log10 <-
+          log10(dat.no.taxon.strata$value)
         ## do log10 on non-stratified table
         #dat.no.taxon.strata <- dat.no.taxon.strata[which(dat.no.taxon.strata$value > 0),]
 
-        dat$agg <- dat.no.taxon.strata[match(dat$match, dat.no.taxon.strata$match),]$value
-        dat$agg_log <- dat.no.taxon.strata[match(dat$match, dat.no.taxon.strata$match),]$log10
+        dat$agg <-
+          dat.no.taxon.strata[match(dat$match, dat.no.taxon.strata$match), ]$value
+        dat$agg_log <-
+          dat.no.taxon.strata[match(dat$match, dat.no.taxon.strata$match), ]$log10
 
         # calculate back the proportion
         dat$value <- (dat$value / dat$agg) * dat$agg_log
-
       }
-
     }
 
     order.levels <- c(taxon.names, other.name, unclassified.name)
@@ -316,20 +337,19 @@ makeHumann2Barplot <-
       if (rescale) {
         print(floor)
 
-        breaks_fun <-  function(x){
+        breaks_fun <-  function(x) {
           unique(floor(pretty(seq(
             0, (max(x) + 1) * 1.1
           ))))
         }
 
-        labels_fun <-  function(x){
+        labels_fun <-  function(x) {
           print(x + floor)
         }
 
-        p <- p + ggplot2::scale_y_continuous(
-          expand = c(0, 0),
-          labels = labels_fun,
-          breaks = breaks_fun)
+        p <- p + ggplot2::scale_y_continuous(expand = c(0, 0),
+                                             labels = labels_fun,
+                                             breaks = breaks_fun)
 
 
         #  # Change y tick mark labels
@@ -380,6 +400,7 @@ makeHumann2Barplot <-
 
     # coloring
     taxa_list <- unique(dat$taxa)
+    # remove other and unclassified
     taxa_list <- taxa_list[taxa_list != other.name &
                              taxa_list != unclassified.name]
     if (use.random.colors) {
@@ -397,8 +418,10 @@ makeHumann2Barplot <-
 
     # replace colors if needed
     if (!missing(last.plot.colors) & !is.null(last.plot.colors)) {
-      colors.df$new <- last.plot.colors[match(colors.df$taxa, last.plot.colors$taxa),]$color
-      colors.df[which(is.na(colors.df$new)),]$new  <- colors.df[which(is.na(colors.df$new)),]$color
+      colors.df$new <-
+        last.plot.colors[match(colors.df$taxa, last.plot.colors$taxa), ]$color
+      colors.df[which(is.na(colors.df$new)), ]$new  <-
+        colors.df[which(is.na(colors.df$new)), ]$color
       colors.df$color <- NULL
       colnames(colors.df)[2] <- "color"
     }
@@ -409,7 +432,6 @@ makeHumann2Barplot <-
         taxa = c(other.name, unclassified.name),
         color = c("grey80", "grey60")
       ))
-    #write.table(file =  "log.txt", colors.df.extended, sep = "\t", quote = F, append = T)
     p <-
       p + ggplot2::scale_fill_manual(values =  colors.df.extended$color, breaks = colors.df.extended$taxa)
     p <-
