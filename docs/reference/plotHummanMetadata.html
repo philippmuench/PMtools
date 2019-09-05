@@ -6,8 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Metaphlan2 HMP1-II
-Can be loaded to workspace via data(hmp1_2_metaphlan) — hmp1_2_metaphlan • PMtools</title>
+<title>plotHummanMetadata — plotHummanMetadata • PMtools</title>
 
 
 <!-- jquery -->
@@ -36,10 +35,8 @@ Can be loaded to workspace via data(hmp1_2_metaphlan) — hmp1_2_metaphlan • P
 
 
 
-<meta property="og:title" content="Metaphlan2 HMP1-II
-Can be loaded to workspace via data(hmp1_2_metaphlan) — hmp1_2_metaphlan" />
-<meta property="og:description" content="Metaphlan2 HMP1-II
-Can be loaded to workspace via data(hmp1_2_metaphlan)" />
+<meta property="og:title" content="plotHummanMetadata — plotHummanMetadata" />
+<meta property="og:description" content="outputs order of samples by bray curtis" />
 <meta name="twitter:card" content="summary" />
 
 
@@ -103,33 +100,41 @@ Can be loaded to workspace via data(hmp1_2_metaphlan)" />
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Metaphlan2 HMP1-II
-Can be loaded to workspace via data(hmp1_2_metaphlan)</h1>
+    <h1>plotHummanMetadata</h1>
     
-    <div class="hidden name"><code>hmp1_2_metaphlan.Rd</code></div>
+    <div class="hidden name"><code>plotHummanMetadata.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>Metaphlan2 HMP1-II
-Can be loaded to workspace via data(hmp1_2_metaphlan)</p>
+    <p>outputs order of samples by bray curtis</p>
     </div>
 
-    <pre class="usage"><span class='no'>hmp1_2_metaphlan</span></pre>
+    <pre class="usage"><span class='fu'>plotHummanMetadata</span>(<span class='no'>metaphlan</span>, <span class='kw'>distance.method</span> <span class='kw'>=</span> <span class='st'>"bray"</span>,
+  <span class='kw'>cluster.method</span> <span class='kw'>=</span> <span class='st'>"single"</span>, <span class='kw'>metadata</span> <span class='kw'>=</span> <span class='no'>hmp1_2_metadata</span>)</pre>
 
+    <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
+    <table class="ref-arguments">
+    <colgroup><col class="name" /><col class="desc" /></colgroup>
+    <tr>
+      <th>metaphlan</th>
+      <td><p>MetaPhlAn2 table</p></td>
+    </tr>
+    <tr>
+      <th>distance.method</th>
+      <td><p>Dissimilarity index, partial match to "manhattan", "euclidean", "canberra", "clark", "bray", "kulczynski", "jaccard", "gower", "altGower", "morisita", "horn", "mountford", "raup", "binomial", "chao", "cao" or "mahalanobis".</p></td>
+    </tr>
+    <tr>
+      <th>cluster.method</th>
+      <td><p>The agglomeration method to be used. This should be (an unambiguous abbreviation of) one of "ward.D", "ward.D2", "single", "complete", "average" (= UPGMA), "mcquitty" (= WPGMA), "median" (= WPGMC) or "centroid" (= UPGMC).</p></td>
+    </tr>
+    </table>
 
-    <h2 class="hasAnchor" id="format"><a class="anchor" href="#format"></a>Format</h2>
-
-    <p>data.frame</p>
-    <h2 class="hasAnchor" id="references"><a class="anchor" href="#references"></a>References</h2>
-
-    <p><a href='http://github.com/philippmuench'>http://github.com/philippmuench</a></p>
 
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
     <ul class="nav nav-pills nav-stacked">
-      <li><a href="#format">Format</a></li>
-      <li><a href="#references">References</a></li>
+      <li><a href="#arguments">Arguments</a></li>
     </ul>
 
   </div>
