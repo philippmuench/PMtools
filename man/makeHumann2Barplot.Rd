@@ -5,7 +5,8 @@
 \title{makeHumann2Barplot}
 \usage{
 makeHumann2Barplot(dat, last.plot.colors, scale = "proportional-log",
-  use.random.colors = T, hide.legend = T, space = "free")
+  use.random.colors = T, hide.legend = T, space = "free",
+  show.all.taxa = T)
 }
 \arguments{
 \item{dat}{table holding preprocessed humann2 information using `humann2Barplot`}
