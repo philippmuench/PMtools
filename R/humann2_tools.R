@@ -311,6 +311,9 @@ makeHumann2Barplot <-
       }
     }
 
+    # set NA values to zero to prevent faced.grid error on missing strata
+    dat$value[is.na(dat$value)] <- 0
+
     order.levels <- c(taxon.names, other.name, unclassified.name)
     p <-
       ggplot2::ggplot(dat = dat, ggplot2::aes(
@@ -466,12 +469,12 @@ makeHumann2Barplot <-
       ))
 
     # remove facet_grid legend
-    p <- p + ggplot2::theme(
-      strip.background = ggplot2::element_blank(),
-      strip.text.x = ggplot2::element_blank()
-    )
+#    p <- p + ggplot2::theme(
+#      strip.background = ggplot2::element_blank(),
+#      strip.text.x = ggplot2::element_blank()
+#    )
     # legend size
-    p <- p + ggplot2::scale_size(range = c(5, 20), guide = "none")
+#    p <- p + ggplot2::scale_size(range = c(5, 20), guide = "none")
 
     # reduce legend point size
     p <-
