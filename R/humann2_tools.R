@@ -82,8 +82,9 @@ humann2Barplot <- function(humann2.table,
   } else { # set all other taxa to "other" except if they are in last.plot.colors
     # check for overlap of taxa
    match.vector <- match(PMtools::shortenTaxons(humann2.classified[, taxa.column]), last.plot.colors$taxa)
+   humann2.classified[which(!is.na(match.vector)),]
    if (any(!is.na(match.vector))) {
-     top.index$ix <- unique(c(which(!is.na(match.vector))), top.index$ix)
+     top.index$ix <- unique(c(which(!is.na(match.vector)), top.index$ix))
      humann2.classified[-top.index$ix,][, taxa.column] <- "Other"
      }
   }
@@ -196,6 +197,9 @@ humann2Barplot <- function(humann2.table,
 #' @param use.random.colors use randomcoloR instead of RColorBrewer
 #' @param hide.legend boolean information if ledgend should be included
 #' @param space free or fixed (x scale)
+#' @param show.all.taxa boolean
+#' @param fixed.floor set ymin to a fixed value to prevent focus on minor bugs
+#' @param fixed.ymax set xmax to a fixed value keep y axis on multiple plots comparable
 #' @export
 makeHumann2Barplot <-
   function(dat,
@@ -204,7 +208,10 @@ makeHumann2Barplot <-
            use.random.colors = T,
            hide.legend = T,
            space = "free",
-           show.all.taxa = T) {
+           show.all.taxa = T,
+           fixed.floor = NULL,
+           fixed.ymax = NULL) {
+
     unclassified.name <- "Unclassified"
     other.name <- "Other"
 
@@ -215,7 +222,6 @@ makeHumann2Barplot <-
     if (length(grep(unclassified.name, taxon.names)) > 0)
       taxon.names <-
       taxon.names[which(taxon.names != unclassified.name)]
-
 
     # scaling value transformation
     if (scale == "log10+1") {
@@ -240,17 +246,23 @@ makeHumann2Barplot <-
 
         table.colsums <-  dat.no.taxon.strata$value
         ymin <- min(table.colsums[which(table.colsums > 0)])
-        floor <- floor(log10(ymin))
 
-        if (log10(ymin) - floor < c_epsilon) {
-          floor <- floor - 1
+        # fix ymin floor
+        if (is.null(fixed.floor)) {
+          floor <- floor(log10(ymin))
+          if (log10(ymin) - floor < c_epsilon) {
+            floor <- floor - 1
+          }
+        } else {
+          floor <- fixed.floor
         }
+
         floors <-  rep(floor , length(table.colsums))
         dat.no.taxon.strata$crests <- dat.no.taxon.strata$value
         # log10 values that are > 0.01
         dat.no.taxon.strata$crests[which(dat.no.taxon.strata$crests > 10 **
                                            floor)] <-
-          log10(dat.no.taxon.strata$crests[which(dat.no.taxon.strata$crests > 10 **
+        log10(dat.no.taxon.strata$crests[which(dat.no.taxon.strata$crests > 10 **
                                                    floor)])
         # floor values that are < 0.01
         dat.no.taxon.strata$crests[which(dat.no.taxon.strata$crests <= 10 **
@@ -264,7 +276,17 @@ makeHumann2Barplot <-
           dat.no.taxon.strata[match(dat$match, dat.no.taxon.strata$match), ]$heights
 
         dat$value <- (dat$value / dat$agg) * dat$agg_heights
+
         ymax <- ceiling(log10(max(dat[which(dat$agg > 0), ]$agg)))
+
+        # replaxe ymax if fixed.ymax is supllied
+        if (!is.null(fixed.ymax)) {
+          if (fixed.ymax >= ymax) {
+            ymax <- fixed.ymax + 1 # +1 to have ymax axis scale as expected
+          } else {
+            stop("fixed.ymax is too low, it should be higher or equal to the real maximum")
+          }
+        }
 
       } else {
         dat$match <- paste0(dat$variable, dat$meta)
@@ -308,8 +330,8 @@ makeHumann2Barplot <-
             0, (max(x) + 1) * 1.1
           ))))
       )
-
       p <- p + ggplot2::ylab("abundance (sqrt)")
+
     } else if (scale == "pseudolog") {
       p <- p + ggplot2::scale_y_continuous(
         expand = c(0, 0),
@@ -318,8 +340,8 @@ makeHumann2Barplot <-
             0, (max(x) + 1) * 1.1
           ))))
       )
-      #   p <- p +  ggplot2::scale_y_continuous(trans = scales::pseudo_log_trans(sigma = 1), expand = c(0, 0))
       p <- p + ggplot2::ylab(dat[1, 1])
+
     } else if (scale == "log10+1") {
       p <- p + ggplot2::scale_y_continuous(
         expand = c(0, 0),
@@ -329,32 +351,36 @@ makeHumann2Barplot <-
           ))))
       )
       p <- p + ggplot2::ylab("abundance (log10+1)")
+
     } else if (scale == "none") {
       message("using no scaling")
       p <- p + ggplot2::ylab("abundance (no scaling)")
+
     } else if (scale == "proportional-log") {
       message("using propotional log")
       if (rescale) {
-        print(floor)
-
-        breaks_fun <-  function(x) {
-          unique(floor(pretty(seq(
-            0, (max(x) + 1) * 1.1
-          ))))
-        }
+          breaks_fun <-  function(x) {
+            unique(floor(pretty(seq(
+              0, (max(x) + 1) * 1.1
+            ))))
+          }
 
         labels_fun <-  function(x) {
           print(x + floor)
         }
+        # remove gap between axis
+        if (!is.null(fixed.ymax)) {
+          # set limits to show plot in correct scale
+          p <- p + ggplot2::scale_y_continuous(labels = labels_fun,
+                                               breaks = breaks_fun,
+                                               expand = c(0, 0))
+          p <- p +  ggplot2::expand_limits(y = fixed.ymax)
+        } else {
+          p <- p + ggplot2::scale_y_continuous(expand = c(0, 0),
+                                               labels = labels_fun,
+                                               breaks = breaks_fun)
+        }
 
-        p <- p + ggplot2::scale_y_continuous(expand = c(0, 0),
-                                             labels = labels_fun,
-                                             breaks = breaks_fun)
-
-
-        #  # Change y tick mark labels
-        #   p <- p + ggplot2::scale_y_discrete(breaks = c(0:ymax),
-        #                       labels = c(rep("aaa",length(0:ymax) )))
       }
       p <- p + ggplot2::ylab("log10")
     } else if (scale == "ggplot2-log10") {
@@ -372,7 +398,6 @@ makeHumann2Barplot <-
       )
       p <- p + ggplot2::ylab("abundance")
     }
-
 
     p <- p + PMtools::themePM(base.size = 7, axis.family = "mono")
     p <- p + ggplot2::theme(
