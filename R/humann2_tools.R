@@ -469,12 +469,12 @@ makeHumann2Barplot <-
       ))
 
     # remove facet_grid legend
-#    p <- p + ggplot2::theme(
-#      strip.background = ggplot2::element_blank(),
-#      strip.text.x = ggplot2::element_blank()
-#    )
+    p <- p + ggplot2::theme(
+      strip.background = ggplot2::element_blank(),
+      strip.text.x = ggplot2::element_blank()
+    )
     # legend size
-#    p <- p + ggplot2::scale_size(range = c(5, 20), guide = "none")
+    p <- p + ggplot2::scale_size(range = c(5, 20), guide = "none")
 
     # reduce legend point size
     p <-
