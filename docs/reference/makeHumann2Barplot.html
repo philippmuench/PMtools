@@ -111,7 +111,7 @@
 
     <pre class="usage"><span class='fu'>makeHumann2Barplot</span>(<span class='no'>dat</span>, <span class='no'>last.plot.colors</span>, <span class='kw'>scale</span> <span class='kw'>=</span> <span class='st'>"proportional-log"</span>,
   <span class='kw'>use.random.colors</span> <span class='kw'>=</span> <span class='no'>T</span>, <span class='kw'>hide.legend</span> <span class='kw'>=</span> <span class='no'>T</span>, <span class='kw'>space</span> <span class='kw'>=</span> <span class='st'>"free"</span>,
-  <span class='kw'>show.all.taxa</span> <span class='kw'>=</span> <span class='no'>T</span>)</pre>
+  <span class='kw'>show.all.taxa</span> <span class='kw'>=</span> <span class='no'>T</span>, <span class='kw'>fixed.floor</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>fixed.ymax</span> <span class='kw'>=</span> <span class='kw'>NULL</span>)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -140,6 +140,18 @@
       <th>space</th>
       <td><p>free or fixed (x scale)</p></td>
     </tr>
+    <tr>
+      <th>show.all.taxa</th>
+      <td><p>boolean</p></td>
+    </tr>
+    <tr>
+      <th>fixed.floor</th>
+      <td><p>set ymin to a fixed value to prevent focus on minor bugs</p></td>
+    </tr>
+    <tr>
+      <th>fixed.ymax</th>
+      <td><p>set xmax to a fixed value keep y axis on multiple plots comparable</p></td>
+    </tr>
     </table>
 
 
@@ -160,7 +172,7 @@
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.4.0.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.4.1.</p>
 </div>
 
       </footer>

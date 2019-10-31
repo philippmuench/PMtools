@@ -6,7 +6,7 @@
 \usage{
 makeHumann2Barplot(dat, last.plot.colors, scale = "proportional-log",
   use.random.colors = T, hide.legend = T, space = "free",
-  show.all.taxa = T)
+  show.all.taxa = T, fixed.floor = NULL, fixed.ymax = NULL)
 }
 \arguments{
 \item{dat}{table holding preprocessed humann2 information using `humann2Barplot`}
@@ -20,6 +20,12 @@ makeHumann2Barplot(dat, last.plot.colors, scale = "proportional-log",
 \item{hide.legend}{boolean information if ledgend should be included}
 
 \item{space}{free or fixed (x scale)}
+
+\item{show.all.taxa}{boolean}
+
+\item{fixed.floor}{set ymin to a fixed value to prevent focus on minor bugs}
+
+\item{fixed.ymax}{set xmax to a fixed value keep y axis on multiple plots comparable}
 }
 \description{
 Generates barplots statified by taxon and metadata
