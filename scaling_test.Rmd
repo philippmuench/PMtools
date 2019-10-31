@@ -57,7 +57,7 @@ dat <-
   humann2Barplot(
     humann2_table,
     metadata = hmp1_2_metadata,
-    feature = "Cas5",
+    feature = "Cas1",
     num.bugs = "auto",
     order.by = "custom",
     custom.order = custom.order
@@ -192,3 +192,201 @@ dev.off()
 ```
 
 ![all_cas1](all_cas.png)
+
+# test color fuctionality
+
+```{r}
+#Library(PMtools)
+# load example datasets
+data(humann2_table)
+data(hmp1_2_metadata)
+data(hmp1_2_metaphlan)
+
+# generate the sample order
+custom.order <-
+  orderHumannBySimilarity(hmp1_2_metaphlan, distance.method = "bray")
+
+plot.colors <- NULL
+
+# generate the data used for plotting
+dat1 <-
+  humann2Barplot(
+    humann2_table,
+    metadata = hmp1_2_metadata,
+    num.bugs.explained.fraction = 0.35,
+    feature = "Cas1",
+    num.bugs = "auto",
+    order.by = "custom",
+    custom.order = custom.order,
+    last.plot.colors = plot.colors
+  )
+
+
+p1 <-
+  makeHumann2Barplot(
+    dat1,
+    last.plot.colors = plot.colors,
+    hide.legend = F,
+    scale = "proportional-log",
+    space = "fixed"
+  )
+
+plot.colors <- p1$colors
+
+dat2 <-
+  humann2Barplot(
+    humann2_table,
+    metadata = hmp1_2_metadata,
+    num.bugs.explained.fraction = 0.35,
+    feature = "Cas2",
+    num.bugs = "auto",
+    order.by = "custom",
+    custom.order = custom.order,
+    last.plot.colors = plot.colors
+  )
+
+p2 <-
+  makeHumann2Barplot(
+    dat2,
+    plot.colors,
+    hide.legend = F,
+    scale = "proportional-log",
+    space = "fixed"
+  )
+
+dat3 <-
+  humann2Barplot(
+    humann2_table,
+    metadata = hmp1_2_metadata,
+    feature = "Cas3",
+    num.bugs = "auto",
+    order.by = "custom",
+    custom.order = custom.order,
+    last.plot.colors = p2$colors
+  )
+
+p3 <-
+  makeHumann2Barplot(
+    dat2,
+    p1$colors,
+    hide.legend = F,
+    scale = "proportional-log",
+    space = "fixed"
+  )
+```
+
+## all Cas genes
+
+```{r}
+p <- NULL
+cas_plots <- vector('list', 10)
+#plot.colors <- NULL
+for (cas in paste0("Cas", 1:10)) {
+  cas_plots[[cas]]  <- local({
+    dat <-
+      humann2Barplot(
+        humann2_table,
+        metadata = hmp1_2_metadata,
+        feature = cas,
+        num.bugs = "auto",
+        num.bugs.explained.fraction = 0.35,
+        order.by = "custom",
+        custom.order = custom.order,
+        last.plot.colors = plot.colors
+      )
+    p <-
+      makeHumann2Barplot(
+        dat,
+        plot.colors,
+        hide.legend = F,
+        scale = "proportional-log",
+        space = "fixed"
+        )
+    plot.colors <<- rbind(plot.colors, p$colors)
+    write.table(p$colors, file = "log.txt", append = T, sep = "\t", row.names = F,
+    col.names = F, quote = F)
+    print(p$gplot)
+  })
+}
+
+png("all_cas_floor_col.png", width = 600, height = 900)
+print(multiplot(plotlist = cas_plots, cols = 2))
+dev.off()
+
+pdf("all_cas_floor_col4.pdf", height = 6, width = 30)
+print(multiplot(plotlist = cas_plots, cols = 2))
+dev.off()
+```
+
+## set floor fixed to -1
+
+```{r}
+# generate the data used for plotting using STSite
+dat <-
+  humann2Barplot(
+    humann2_table,
+    metadata = hmp1_2_metadata,
+    feature = "Cas4",
+    num.bugs = "auto",
+    metadata.factor = 5,
+    order.by = "custom",
+    column.stratification.order =  c("Subgingival_plaque","Supragingival_plaque","Buccal_mucosa","Saliva","Tongue_dorsum","Throat","Hard_palate","Keratinized_gingiva","Palatine_Tonsils","Stool","Anterior_nares","L_Retroauricular_crease","R_Retroauricular_crease","R_Antecubital_fossa","Mid_vagina","Posterior_fornix","Vaginal_introitus"),
+    custom.order = custom.order)
+
+p <-
+  makeHumann2Barplot(
+    dat,
+    NULL,
+    fixed.floor = -1,
+    fixed.ymax = 4,
+    hide.legend = F,
+    scale = "proportional-log",
+    space = "fixed")
+
+plot(p$gplot)
+```
+
+## plot all Cas genes with fixed floor
+
+## all Cas genes
+
+```{r}
+p <- NULL
+cas_plots <- vector('list', 10)
+plot.colors <- NULL
+for (cas in paste0("Cas", 1:10)) {
+  cas_plots[[cas]]  <- local({
+    dat <-
+      humann2Barplot(
+        humann2_table,
+        metadata = hmp1_2_metadata,
+        feature = cas,
+        num.bugs = "auto",
+        metadata.factor = 5,
+           column.stratification.order =  c("Subgingival_plaque","Supragingival_plaque","Buccal_mucosa","Saliva","Tongue_dorsum","Throat","Hard_palate","Keratinized_gingiva","Palatine_Tonsils","Stool","Anterior_nares","L_Retroauricular_crease","R_Retroauricular_crease","R_Antecubital_fossa","Mid_vagina","Posterior_fornix","Vaginal_introitus"),
+        num.bugs.explained.fraction = 0.35,
+        order.by = "custom",
+        custom.order = custom.order,
+        last.plot.colors = plot.colors
+      )
+    p <-
+      makeHumann2Barplot(
+        dat,
+        plot.colors,
+        hide.legend = F,
+        fixed.floor = -1,
+        fixed.ymax = 4,
+        scale = "proportional-log",
+        space = "fixed"
+        )
+    plot.colors <<- rbind(plot.colors, p$colors)
+    write.table(p$colors, file = "log.txt", append = T, sep = "\t", row.names = F,
+    col.names = F, quote = F)
+    print(p$gplot)
+  })
+}
+
+pdf("all_cas_fixed_floor_fixed_ymax_site2.pdf", height = 6, width = 30)
+print(multiplot(plotlist = cas_plots, cols = 2))
+dev.off()
+```
