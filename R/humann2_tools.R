@@ -200,6 +200,7 @@ humann2Barplot <- function(humann2.table,
 #' @param show.all.taxa boolean
 #' @param fixed.floor set ymin to a fixed value to prevent focus on minor bugs
 #' @param fixed.ymax set xmax to a fixed value keep y axis on multiple plots comparable
+#' @param sample.threshold minimum number of samples per strata required for plotting
 #' @export
 makeHumann2Barplot <-
   function(dat,
@@ -207,10 +208,11 @@ makeHumann2Barplot <-
            scale = "proportional-log",
            use.random.colors = T,
            hide.legend = T,
-           space = "free",
+           space = "fixed",
            show.all.taxa = T,
            fixed.floor = NULL,
-           fixed.ymax = NULL) {
+           fixed.ymax = NULL,
+           sample.threshold = 100) {
 
     unclassified.name <- "Unclassified"
     other.name <- "Other"
@@ -315,6 +317,16 @@ makeHumann2Barplot <-
     dat$value[is.na(dat$value)] <- 0
 
     order.levels <- c(taxon.names, other.name, unclassified.name)
+
+    # filter by sample threshold
+    dat.filter <- data.frame(sample = dat$variable, meta = dat$meta)
+    dat.filter.u <- unique(dat.filter)
+
+    strata.occ <- as.data.frame(table(dat.filter.u$meta))
+    sites.to.keep <- strata.occ[which(strata.occ$Freq > sample.threshold),]$Var1
+    message(sites.to.keep)
+    dat <- dat[dat$meta %in% sites.to.keep,]
+
     p <-
       ggplot2::ggplot(dat = dat, ggplot2::aes(
         x = variable,
