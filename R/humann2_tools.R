@@ -201,6 +201,7 @@ humann2Barplot <- function(humann2.table,
 #' @param fixed.floor set ymin to a fixed value to prevent focus on minor bugs
 #' @param fixed.ymax set xmax to a fixed value keep y axis on multiple plots comparable
 #' @param sample.threshold minimum number of samples per strata required for plotting
+#' @param hide.strata.legend hide color legend
 #' @export
 makeHumann2Barplot <-
   function(dat,
@@ -212,7 +213,8 @@ makeHumann2Barplot <-
            show.all.taxa = T,
            fixed.floor = NULL,
            fixed.ymax = NULL,
-           sample.threshold = 100) {
+           sample.threshold = 10,
+           hide.strata.legend = F) {
 
     unclassified.name <- "Unclassified"
     other.name <- "Other"
@@ -397,7 +399,7 @@ makeHumann2Barplot <-
         }
 
       }
-      p <- p + ggplot2::ylab("log10")
+      p <- p + ggplot2::ylab(dat$SRS[1])
     } else if (scale == "ggplot2-log10") {
       message("using ggplot2 log10 axis scaling")
       p <- p + ggplot2::scale_y_log10()
@@ -474,18 +476,25 @@ makeHumann2Barplot <-
       ))
     p <-
       p + ggplot2::scale_fill_manual(values =  colors.df.extended$color, breaks = colors.df.extended$taxa)
-    p <-
-      p + ggplot2::guides(fill = ggplot2::guide_legend(
-        title = "",
-        ncol = length(colors.df.extended$taxa)
-      ))
+
+    if (hide.strata.legend) {
+     p <- p + ggplot2::theme(legend.position = "none")
+    } else {
+      p <-
+        p + ggplot2::guides(fill = ggplot2::guide_legend(
+          title = "",
+          ncol = length(colors.df.extended$taxa)
+        ))
+
+    }
 
     # remove facet_grid legend
     p <- p + ggplot2::theme(
       strip.background = ggplot2::element_blank(),
       strip.text.x = ggplot2::element_blank()
     )
-    # legend size
+
+    # adjust legend size
     p <- p + ggplot2::scale_size(range = c(5, 20), guide = "none")
 
     # reduce legend point size
