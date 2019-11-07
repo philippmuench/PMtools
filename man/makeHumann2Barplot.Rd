@@ -5,8 +5,9 @@
 \title{makeHumann2Barplot}
 \usage{
 makeHumann2Barplot(dat, last.plot.colors, scale = "proportional-log",
-  use.random.colors = T, hide.legend = T, space = "free",
-  show.all.taxa = T, fixed.floor = NULL, fixed.ymax = NULL)
+  use.random.colors = T, hide.legend = T, space = "fixed",
+  show.all.taxa = T, fixed.floor = NULL, fixed.ymax = NULL,
+  sample.threshold = 100)
 }
 \arguments{
 \item{dat}{table holding preprocessed humann2 information using `humann2Barplot`}
@@ -26,6 +27,8 @@ makeHumann2Barplot(dat, last.plot.colors, scale = "proportional-log",
 \item{fixed.floor}{set ymin to a fixed value to prevent focus on minor bugs}
 
 \item{fixed.ymax}{set xmax to a fixed value keep y axis on multiple plots comparable}
+
+\item{sample.threshold}{minimum number of samples per strata required for plotting}
 }
 \description{
 Generates barplots statified by taxon and metadata
