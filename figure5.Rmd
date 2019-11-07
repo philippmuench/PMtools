@@ -1,0 +1,92 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+# Figure 5
+
+```{r}
+library(PMtools)
+data(humann2_table)
+data(hmp1_2_metadata)
+data(hmp1_2_metaphlan)
+
+# generate the sample order
+custom.order <-
+  orderHumannBySimilarity(hmp1_2_metaphlan, distance.method = "bray")
+
+p <- NULL
+cas_plots <- vector('list', 10)
+plot.colors <- NULL
+
+for (cas in paste0("Cas", 1:10)) {
+  cas_plots[[cas]]  <- local({
+    
+ dat <-
+      humann2Barplot(
+        humann2_table,
+        metadata = hmp1_2_metadata,
+        feature = cas,
+        num.bugs = "auto",
+        metadata.factor = 5,
+        column.stratification.order =  c("Subgingival_plaque","Supragingival_plaque","Buccal_mucosa","Saliva","Tongue_dorsum","Throat","Hard_palate","Keratinized_gingiva","Palatine_Tonsils","Stool","Anterior_nares","L_Retroauricular_crease","R_Retroauricular_crease","R_Antecubital_fossa","Mid_vagina","Posterior_fornix","Vaginal_introitus"),
+        num.bugs.explained.fraction = 0.35,
+        order.by = "custom",
+        custom.order = custom.order,
+      )
+ 
+    p <-
+      makeHumann2Barplot(
+        dat,
+        last.plot.colors = NULL,
+        hide.legend = F,
+        sample.threshold = 50,
+        fixed.floor = -1,
+        fixed.ymax = 3,
+        scale = "proportional-log",
+        space = "fixed"
+        )
+     plot.colors <<- rbind(plot.colors, p$colors)
+  })
+}
+
+# use plot colors for plotting
+cas_plots <- vector('list', 10)
+
+for (cas in paste0("Cas", 1:10)) {
+  cas_plots[[cas]]  <- local({
+    
+ dat <-
+      humann2Barplot(
+        humann2_table,
+        metadata = hmp1_2_metadata,
+        feature = cas,
+        num.bugs = "auto",
+        metadata.factor = 5,
+        column.stratification.order =  c("Subgingival_plaque","Supragingival_plaque","Buccal_mucosa","Saliva","Tongue_dorsum","Throat","Hard_palate","Keratinized_gingiva","Palatine_Tonsils","Stool","Anterior_nares","L_Retroauricular_crease","R_Retroauricular_crease","R_Antecubital_fossa","Mid_vagina","Posterior_fornix","Vaginal_introitus"),
+        num.bugs.explained.fraction = 0.35,
+        order.by = "custom",
+        custom.order = custom.order,
+        last.plot.colors = plot.colors
+      )
+ 
+    p <-
+      makeHumann2Barplot(
+        dat,
+        last.plot.colors = plot.colors,
+        hide.legend = F,
+        fixed.floor = -1,
+        sample.threshold = 20,
+        fixed.ymax = 3,
+        scale = "proportional-log",
+        space = "fixed"
+        )
+  })
+}
+
+pdf("figure5.pdf", height = 10, width = 9)
+print(multiplot(plotlist = cas_plots, cols = 2))
+dev.off()
+
+```
+
