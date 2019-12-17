@@ -4,8 +4,11 @@
 \alias{orderHumannBySimilarity}
 \title{orderHumannBySimilarity}
 \usage{
-orderHumannBySimilarity(metaphlan, distance.method = "bray",
-  cluster.method = "single")
+orderHumannBySimilarity(
+  metaphlan,
+  distance.method = "bray",
+  cluster.method = "single"
+)
 }
 \arguments{
 \item{metaphlan}{MetaPhlAn2 table}

@@ -4,8 +4,12 @@
 \alias{plotHummanMetadata}
 \title{plotHummanMetadata}
 \usage{
-plotHummanMetadata(metaphlan, distance.method = "bray",
-  cluster.method = "single", metadata = hmp1_2_metadata)
+plotHummanMetadata(
+  metaphlan,
+  distance.method = "bray",
+  cluster.method = "single",
+  metadata = hmp1_2_metadata
+)
 }
 \arguments{
 \item{metaphlan}{MetaPhlAn2 table}

@@ -113,12 +113,22 @@ HUMAnN2 feature, similar to `humann2_barplot` Optimized for viewability of
 many features in one figure by limiting the number of statifications.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>humann2Barplot</span>(<span class='no'>humann2.table</span>, <span class='kw'>num.bugs</span> <span class='kw'>=</span> <span class='st'>"auto"</span>,
-  <span class='kw'>num.bugs.explained.fraction</span> <span class='kw'>=</span> <span class='fl'>0.25</span>, <span class='kw'>feature</span> <span class='kw'>=</span> <span class='st'>"Cas1"</span>,
-  <span class='kw'>featue.column</span> <span class='kw'>=</span> <span class='fl'>1</span>, <span class='kw'>taxa.column</span> <span class='kw'>=</span> <span class='fl'>2</span>, <span class='no'>metadata</span>, <span class='kw'>metadata.id</span> <span class='kw'>=</span> <span class='fl'>9</span>,
-  <span class='kw'>metadata.factor</span> <span class='kw'>=</span> <span class='fl'>4</span>, <span class='kw'>use.custom.column.stratification</span> <span class='kw'>=</span> <span class='no'>T</span>,
-  <span class='kw'>order.by</span> <span class='kw'>=</span> <span class='st'>"bc"</span>, <span class='kw'>column.stratification.order</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"Oral"</span>, <span class='st'>"Skin"</span>,
-  <span class='st'>"Vaginal"</span>, <span class='st'>"Gut"</span>), <span class='no'>custom.order</span>, <span class='kw'>last.plot.colors</span> <span class='kw'>=</span> <span class='kw'>NULL</span>)</pre>
+    <pre class="usage"><span class='fu'>humann2Barplot</span>(
+  <span class='no'>humann2.table</span>,
+  <span class='kw'>num.bugs</span> <span class='kw'>=</span> <span class='st'>"auto"</span>,
+  <span class='kw'>num.bugs.explained.fraction</span> <span class='kw'>=</span> <span class='fl'>0.25</span>,
+  <span class='kw'>feature</span> <span class='kw'>=</span> <span class='st'>"Cas1"</span>,
+  <span class='kw'>featue.column</span> <span class='kw'>=</span> <span class='fl'>1</span>,
+  <span class='kw'>taxa.column</span> <span class='kw'>=</span> <span class='fl'>2</span>,
+  <span class='no'>metadata</span>,
+  <span class='kw'>metadata.id</span> <span class='kw'>=</span> <span class='fl'>9</span>,
+  <span class='kw'>metadata.factor</span> <span class='kw'>=</span> <span class='fl'>4</span>,
+  <span class='kw'>use.custom.column.stratification</span> <span class='kw'>=</span> <span class='no'>T</span>,
+  <span class='kw'>order.by</span> <span class='kw'>=</span> <span class='st'>"bc"</span>,
+  <span class='kw'>column.stratification.order</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"Oral"</span>, <span class='st'>"Skin"</span>, <span class='st'>"Vaginal"</span>, <span class='st'>"Gut"</span>),
+  <span class='no'>custom.order</span>,
+  <span class='kw'>last.plot.colors</span> <span class='kw'>=</span> <span class='kw'>NULL</span>
+)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">

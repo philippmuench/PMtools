@@ -4,10 +4,19 @@
 \alias{makeHumann2Barplot}
 \title{makeHumann2Barplot}
 \usage{
-makeHumann2Barplot(dat, last.plot.colors, scale = "proportional-log",
-  use.random.colors = T, hide.legend = T, space = "fixed",
-  show.all.taxa = T, fixed.floor = NULL, fixed.ymax = NULL,
-  sample.threshold = 10, hide.strata.legend = F)
+makeHumann2Barplot(
+  dat,
+  last.plot.colors,
+  scale = "proportional-log",
+  use.random.colors = T,
+  hide.legend = T,
+  space = "fixed",
+  show.all.taxa = T,
+  fixed.floor = NULL,
+  fixed.ymax = NULL,
+  sample.threshold = 10,
+  hide.strata.legend = F
+)
 }
 \arguments{
 \item{dat}{table holding preprocessed humann2 information using `humann2Barplot`}
